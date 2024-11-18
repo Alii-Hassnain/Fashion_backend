@@ -4,6 +4,11 @@ const jwt = require("jsonwebtoken")
 const Schema = mongoose.Schema;
 
 const userSchema = new Schema({
+    // _id:{
+    //     type:Number,
+    //     // index:true,
+    //     default:0
+    // },
     username: {
         type: String,
         required: true,
@@ -60,11 +65,11 @@ userSchema.methods.generateAccessToken =  function () {
     
 }
 userSchema.methods.generateRefreshToken = async function () {
-    return (await jwt.sign(
+    return  jwt.sign(
         { _id: this._id },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
-    ))
+        { expiresIn: process.env.REFRESH_TOKEN_EXPIRY}
+    )
 }
 
 

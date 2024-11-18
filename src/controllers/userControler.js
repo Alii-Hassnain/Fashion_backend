@@ -59,8 +59,8 @@ const generateAccessAndRefreshToken = async (userId) => {
     try {
        const user = await User.findById(userId);
        console.log(user);
-       const accessToken = user.generateAccessToken();
-       const refreshToken = user.generateRefreshToken();
+       const accessToken = await user.generateAccessToken();
+       const refreshToken =  await user.generateRefreshToken();
        user.refreshToken = refreshToken;
        await user.save({
           validateBeforeSave: false,
@@ -98,10 +98,10 @@ module.exports.loginUser = async (req, res) => {
         const { refreshToken, accessToken } = await generateAccessAndRefreshToken(user._id)
         const option={
             httpOnly:true,
-            secure:true,
-            // sameSite:"strict",
+            // secure:true,
+            sameSite:"strict",
         }
-        console.log("Tokens after generating ",accessToken ,"/n ",refreshToken);
+        console.log("Tokens after generating ",accessToken ,"\n ",refreshToken);
     
         const userWithoutPassword = await User.findById(user._id).select("-password")
         res
@@ -115,7 +115,7 @@ module.exports.loginUser = async (req, res) => {
                 success: true,
                 token: accessToken,
                 }
-            // new ApiResponse(200, {userWithoutPassword, accessToken}, "User logged in successfully")
+            //  new ApiResponse(200, {user:userWithoutPassword, token:refreshToken}, "User logged in successfully")
         )
     } catch (error) {
      console.log("error in login user",error)
