@@ -25,6 +25,11 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
+    isVerified:{
+        type:Boolean,
+        default:false
+    },
+    verificationCode:String,
     refreshToken: {
         type: String
     },
@@ -46,6 +51,9 @@ userSchema.pre("save", async function (next) {
 
     userSchema.methods.isPasswordCorrect = async function (password) {
         return await bcrypt.compare(password, this.password)
+    }
+    userSchema.methods.verifyToken = async function (token) {
+        return await jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
     }
 userSchema.methods.generateAccessToken =  function () {
     return jwt.sign(
