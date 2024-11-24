@@ -1,9 +1,10 @@
 const nodemailer = require("nodemailer");
+const {verification_Email_Template}=require("../utils/emailTemplate")
 //require("dotenv").config({ path: "../../.env" });
 //console.log(process.env.EMAIL_NAME);
 
 
-module.exports. transporter = nodemailer.createTransport({
+const  transporter = nodemailer.createTransport({
   host: "smtp.gmail.com",
   port: 587,
   secure: false, // true for port 465, false for other ports
@@ -15,6 +16,42 @@ module.exports. transporter = nodemailer.createTransport({
   },
 });
 
+const sendEmail=async(email,type,username,link)=>{
+  try {
+    let subject='',text='',html ='';
+    if(type==="verify"){
+        subject="Hello ✔ Verify your email";
+        text="verify your email";
+        html=verification_Email_Template.replace("{verificationCode}",link); 
+    }else if(type==="forgot"){
+      subject = "Hello ✔ Reset your password";
+      text = "reset your password";
+      html = `
+      <h3>Hello ${username || 'User'},</h3>
+      <p>You requested to reset your password. Click the link below to reset it:</p>
+      <a href="${link}" style="color: blue;">Reset Password</a>
+      <p>This link will expire in 1 hour.</p>
+    `;
+    }
+    else {
+      throw new Error('Invalid email type'); 
+    }
+
+    await transporter.sendMail({
+      from: '"CodeByAqeel 👻" <fashionfyp144171@gmail.com>', // sender address
+      to:email, // sender address
+      subject,
+      html,
+    })
+    console.log(`email send successfully to ${email}`)
+  } catch (error) {
+    console.log("error in sending mail : ",error )
+
+  }
+}
+
+
+module.exports=sendEmail ;
 
 // const sendEmail=async()=>{
 //   try {
