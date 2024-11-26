@@ -6,7 +6,6 @@ const sendEmail = require("../middlewares/nodeMailer");
 const jwt = require("jsonwebtoken");
 module.exports.registerUser = async (req, res) => {
     const { username, email, password } = req.body;
-
     if (!username || !email || !password) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
@@ -26,20 +25,25 @@ module.exports.registerUser = async (req, res) => {
     }
 
     try {
+        let role="user"
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-
+        if(process.env.ADMIN_SECRET===req.body.secret){
+            role="admin";
+        }
         const user = new User(
             {
                 username,
                 email,
                 password,
-                verificationCode
+                verificationCode,
+                role
             });
 
+            console.log("secret of admin : ",req.body.secret)
         //const verify = sendVerificationCode(user.email, verificationCode);
-        const verify = sendEmail(user.email,"verify",user.username,verificationCode)
+        const verify =await sendEmail(user.email,"verify",user.username,verificationCode)
         if (!verify) {
-            return res.status(500).json({ message: "Error while registering user in code verification ", success: false });
+            return res.status(500).json({ message: "Error while sending verification code && email account not exist ! ", success: false });
         }
         await user.save()
         const userWithoutPassword = await User.findById(user._id).select("-password -refreshToken")

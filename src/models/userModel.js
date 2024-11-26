@@ -18,6 +18,7 @@ const userSchema = new Schema({
     email: {
         type: String,
         required: true,
+        trim: true,
         unique: true,
         index: true
     },
@@ -25,11 +26,16 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    isVerified:{
-        type:Boolean,
-        default:false
+    isVerified: {
+        type: Boolean,
+        default: false
     },
-    verificationCode:String,
+    role: {
+        type: String,
+        enum: ["user", "admin"],
+        default: "user"
+    },
+    verificationCode: String,
     refreshToken: {
         type: String
     },
@@ -42,7 +48,7 @@ userSchema.pre("save", async function (next) {
     next();
 }),
 
-    userSchema.pre("findOneAndUpdate", async function (next) {
+userSchema.pre("findOneAndUpdate", async function (next) {
         const update = await this.getUpdate()
         if (update.password) {
             update.password = await bcrypt.hash(update.password, 10)
@@ -53,30 +59,30 @@ userSchema.pre("save", async function (next) {
     userSchema.methods.isPasswordCorrect = async function (password) {
         return await bcrypt.compare(password, this.password)
     }
-    userSchema.methods.verifyToken = async function (token) {
-        return await jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
-    }
-userSchema.methods.generateAccessToken =  function () {
+userSchema.methods.verifyToken = async function (token) {
+    return await jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
+}
+userSchema.methods.generateAccessToken = function () {
     return jwt.sign(
         {
             _id: this._id,
             email: this.email,
             username: this.username
         },
-        
-         process.env.ACCESS_TOKEN_SECRET
+
+        process.env.ACCESS_TOKEN_SECRET
         // "secret"
-         ,
-        
-        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }     
-        )
-    
+        ,
+
+        { expiresIn: process.env.ACCESS_TOKEN_EXPIRY }
+    )
+
 }
 userSchema.methods.generateRefreshToken = async function () {
-    return  jwt.sign(
+    return jwt.sign(
         { _id: this._id },
         process.env.REFRESH_TOKEN_SECRET,
-        { expiresIn: process.env.REFRESH_TOKEN_EXPIRY}
+        { expiresIn: process.env.REFRESH_TOKEN_EXPIRY }
     )
 }
 
