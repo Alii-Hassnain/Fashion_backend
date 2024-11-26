@@ -19,6 +19,10 @@ const productsSchema = new Schema({
         type: Number,
         default: 0
     },
+    product_image: {
+        type: String,
+        required: true,
+    },
     stock: {
         type: Number,
         default: 0
@@ -28,3 +32,4 @@ const productsSchema = new Schema({
 }, { timestamps: true })
 
 module.exports = mongoose.model("products", productsSchema)
+// export const Product = mongoose.model("products", productsSchema)
