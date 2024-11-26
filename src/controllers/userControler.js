@@ -10,12 +10,12 @@ module.exports.registerUser = async (req, res) => {
     if (!username || !email || !password) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
-
     const existedUser = await User.findOne(
         {
             $or: [
                 {
                     username
+                    
                 }, {
                     email
                 }]
@@ -36,7 +36,7 @@ module.exports.registerUser = async (req, res) => {
                 verificationCode
             });
 
-        // const verify = sendVerificationCode(user.email, verificationCode);
+        //const verify = sendVerificationCode(user.email, verificationCode);
         const verify = sendEmail(user.email,"verify",user.username,verificationCode)
         if (!verify) {
             return res.status(500).json({ message: "Error while registering user in code verification ", success: false });
