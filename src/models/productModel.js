@@ -24,7 +24,7 @@ const productsSchema = new Schema({
         default: 0
     },
     description: String,
-    catogery: String,
+    // catogery: String,
 }, { timestamps: true })
 
-module.exports = mongoose.model("products", productsSchema)
+module.exports.Product = mongoose.model("products", productsSchema)

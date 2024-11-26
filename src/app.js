@@ -3,6 +3,7 @@ const cors=require('cors');
 const cookieParser=require('cookie-parser');
 const prooductsRouter=require('./routers/productsRouter');
 const userRouter=require('./routers/userRouter');
+const adminRouter=require('./routers/adminRouter');
 const app=express();
 
 app.use(cors(
@@ -20,6 +21,7 @@ app.use(express.urlencoded({extended:true}));
 app.use(express.static('public'));
 app.use('/api',prooductsRouter);
 app.use('/user',userRouter);
+app.use('/admin',adminRouter);
 app.get('/',(req,res)=>{
     res.send('Hello from server');
 })

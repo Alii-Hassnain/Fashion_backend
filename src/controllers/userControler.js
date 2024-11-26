@@ -10,12 +10,12 @@ module.exports.registerUser = async (req, res) => {
     if (!username || !email || !password) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
-
     const existedUser = await User.findOne(
         {
             $or: [
                 {
                     username
+                    
                 }, {
                     email
                 }]
@@ -36,7 +36,7 @@ module.exports.registerUser = async (req, res) => {
                 verificationCode
             });
 
-        // const verify = sendVerificationCode(user.email, verificationCode);
+        //const verify = sendVerificationCode(user.email, verificationCode);
         const verify = sendEmail(user.email,"verify",user.username,verificationCode)
         if (!verify) {
             return res.status(500).json({ message: "Error while registering user in code verification ", success: false });
@@ -65,12 +65,12 @@ module.exports.verifyUser = async (req, res) => {
         if (!user) {
             return res.status(404).json({ message: "Invalid verification code or User not found ", success: false });
         }
-        user.isVerified= true;
-        if(user.isVerified === true){
+        if(user?.isVerified === true){
             return res
             .status(200)
-            .json({ message: "User already verified", success: true });
+            .json({ message: "User already verified", success: false });
         }
+        user.isVerified= true;
         user.verificationCode = undefined;
         const updatedUser= await user.save();
 
@@ -231,6 +231,7 @@ module.exports.loginUser = async (req, res) => {
             // throw new ApiError(401,"Password Is In-Corect ");
             return res.status(401).json({ message: "Password Is In-Corect ", success: false });
         }
+        
         const { refreshToken, accessToken } = await generateAccessAndRefreshToken(user._id)
         const option = {
             httpOnly: true,
