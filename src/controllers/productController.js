@@ -158,6 +158,7 @@ const products = [
   },
 ];
 
+const { uploadOnClouinary } = require("../Utils/Cloudnary");
 const Product = require("../models/productModel");
 module.exports.getallProducts = (req, res) => {
   const product = products;
@@ -178,6 +179,11 @@ module.exports.createProducts = async (req, res) => {
     //     );
 
     //  const newProduct=new Products(req.body);
+
+    const localPath = req.file.path;
+    console.log(localPath);
+
+
     const { title, price, stock, rating, description, category } = req.body;
     const product = new Product({
       title,
