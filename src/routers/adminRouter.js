@@ -14,7 +14,7 @@ router.delete("/delete-user/:id", adminController.deleteUser);
 router.get("/get-products", adminController.getAllProducts);
 router.get("/get-product/:id", adminController.getOneProduct);
 router.delete("/delete-product/:id", adminController.deleteProducts);
-router.route("/create-product").post(upload.single("product_image"), adminController.createProduct);
+router.post("/create-product",upload.single("product_image"), adminController.createProduct);
 router.patch("/update-product/:id",adminController.updateProduct)
 
 module.exports = router;

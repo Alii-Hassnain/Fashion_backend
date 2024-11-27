@@ -120,12 +120,15 @@ module.exports.createProduct=async(req,res)=>{
         return res.status(400).json({ message: "Please fill all the fields", success: false });
         }
         const file = req.file.path;
-        console.log(file);
+        console.log("file path :",file);
         const imageUrl = await uploadOnClouinary(file);
-        console.log(imageUrl);
+        if(!imageUrl){
+            return res.status(400).json({ message: "Error while uploading image", success: false });
+        }
+        console.log("image url : ",imageUrl.url);
         const newProduct=new Product({
             title,
-            product_image:imageUrl.url,
+            product_image:imageUrl?.url || "",
             price,
             stock,
             rating,
