@@ -158,7 +158,7 @@ const products = [
   },
 ];
 
-const { uploadOnClouinary } = require("../Utils/Cloudnary");
+
 const Product = require("../models/productModel");
 module.exports.getallProducts = (req, res) => {
   const product = products;

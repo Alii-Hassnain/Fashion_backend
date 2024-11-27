@@ -1,5 +1,6 @@
 const { User } = require("../models/userModel");
 const { Product } = require("../models/productModel");
+const { uploadOnClouinary } = require("../Utils/Cloudnary");
 
 // ----------------- get all users  -------------------
 module.exports.getAllUsers = async (req, res) => {
@@ -108,25 +109,35 @@ module.exports.deleteProducts = async (req, res) => {
 module.exports.createProduct=async(req,res)=>{
     try {
         const {title,price,stock,rating,description}=req.body;
+        console.log("title",title);
+        console.log("price",price);
+        console.log("stock",stock);
+        console.log("rating",rating);
+        console.log("description",description);
+
+        
         if(!title || !price || !stock || !rating || !description){
         return res.status(400).json({ message: "Please fill all the fields", success: false });
         }
+        const file = req.file.path;
+        console.log(file);
+        const imageUrl = await uploadOnClouinary(file);
+        console.log(imageUrl);
         const newProduct=new Product({
             title,
+            product_image:imageUrl.url,
             price,
             stock,
             rating,
             description,
         });
-        const product=await newProduct.save();
+        const product = await newProduct.save();
         return res
         .status(200)
         .json({ message: "Product created successfully", success: true ,data:product});
-        
-
     } catch (error) {
         console.log("error in create product",error)
-       return  res.status(500).json({ message: "Error while creating product", error, success: false });
+        return res.status(500).json({ message: "Error while creating product", error, success: false });
     }
 }
 // ----------------- update product  -------------------

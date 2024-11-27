@@ -15,10 +15,14 @@ app.use(cors(
    } 
 ));
 
+//middlewares
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}));
 app.use(express.static('public'));
+
+
+//Route Definitions
 app.use('/api',prooductsRouter);
 app.use('/user',userRouter);
 app.use('/admin',adminRouter);

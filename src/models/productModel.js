@@ -32,5 +32,8 @@ const productsSchema = new Schema({
 }, { timestamps: true })
 // productsSchema.plugin(AutoIncrement, { id: '1', inc_field: '_id' });
 
-module.exports = mongoose.model("products", productsSchema)
+const Product = mongoose.model("products", productsSchema)
+module.exports = {
+    Product
+}
 // export const Product = mongoose.model("products", productsSchema)
