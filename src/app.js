@@ -1,7 +1,7 @@
 const express=require('express');
 const cors=require('cors');
 const cookieParser=require('cookie-parser');
-const prooductsRouter=require('./routers/productsRouter');
+const productsRouter=require('./routers/productsRouter');
 const userRouter=require('./routers/userRouter');
 const adminRouter=require('./routers/adminRouter');
 const app=express();
@@ -23,7 +23,7 @@ app.use(express.static('public'));
 
 
 //Route Definitions
-app.use('/api',prooductsRouter);
+app.use('/api',productsRouter);
 app.use('/user',userRouter);
 app.use('/admin',adminRouter);
 app.get('/',(req,res)=>{
