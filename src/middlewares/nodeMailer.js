@@ -34,6 +34,7 @@ const sendEmail=async(email,type,username,link)=>{
     `;
     }
     else {
+
       throw new Error('Invalid email type'); 
     }
 
@@ -42,11 +43,17 @@ const sendEmail=async(email,type,username,link)=>{
       to:email, // sender address
       subject,
       html,
-    })
+    });
+    // .then(()=>
+    //   console.log(`Email successfully sent to ${email}`)).catch((error) => {
+    //     console.log("Error in sending email: ", error);
+     
+    //   });
     console.log(`email send successfully to ${email}`)
+    return true
   } catch (error) {
     console.log("error in sending mail : ",error )
-
+    return false
   }
 }
 

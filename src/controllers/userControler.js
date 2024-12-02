@@ -4,8 +4,10 @@ const ApiResponse = require("../utils/ApiResponse");
 const { sendVerificationCode } = require("../middlewares/email");
 const sendEmail = require("../middlewares/nodeMailer");
 const jwt = require("jsonwebtoken");
-module.exports.registerUser = async (req, res) => {
+// module.exports.
+const registerUser = async (req, res) => {
     const { username, email, password } = req.body;
+try{
     if (!username || !email || !password) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
@@ -24,30 +26,38 @@ module.exports.registerUser = async (req, res) => {
         return res.status(409).json({ message: "User already exists", success: false });
     }
 
-    try {
-        let role="user"
-        const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
-        if(process.env.ADMIN_SECRET===req.body.secret){
-            role="admin";
-        }
-        const user = new User(
-            {
-                username,
-                email,
-                password,
-                verificationCode,
-                role
-            });
-
+    let role="user"
+    const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
+    console.log("verificatin code : ",verificationCode)
+    if(process.env.ADMIN_SECRET===req.body.secret){
+        role="admin";
+    }
+    const user = new User(
+        {
+            username,
+            email,
+            password,
+            verificationCode,
+            role
+        });
+        try {
             console.log("secret of admin : ",req.body.secret)
         //const verify = sendVerificationCode(user.email, verificationCode);
-        const verify =await sendEmail(user.email,"verify",user.username,verificationCode)
+        const verify =await sendEmail("aqeelarshad811@gmail.com","verify","aqeel811",verificationCode)
+
+        //const verify =await sendEmail(user.email,"verify",user.username,verificationCode)
+        console.log("verify user details : ",verify)
         if (!verify) {
             return res.status(500).json({ message: "Error while sending verification code && email account not exist ! ", success: false });
         }
-        await user.save()
-        const userWithoutPassword = await User.findById(user._id).select("-password -refreshToken")
-
+        
+    }catch(error){
+        console.log("error in sending email : ",error)
+        return res.status(500).json({ message: "Error while sending verification code !", success: false });
+    }
+    const newUser = await user.save()
+    const userWithoutPassword = await User.findById(newUser._id).select("-password -refreshToken")
+    
        return  res
         .status(201)
         .json({ message: "User registered successfully", data: userWithoutPassword, success: true })
@@ -59,7 +69,8 @@ module.exports.registerUser = async (req, res) => {
             .json({ message: "Error while registering user", error, success: false });
     }
 } 
-module.exports.verifyUser = async (req, res) => {
+// module.exports.
+const verifyUser = async (req, res) => {
     try {
         const{verificationCode}=req.body;
         if(!verificationCode){
@@ -89,7 +100,8 @@ module.exports.verifyUser = async (req, res) => {
         
     }
 }   
-module.exports.forgotPassword1=async(req,res)=>{
+// module.exports.
+const forgotPassword1=async(req,res)=>{
     try {
         const {email,password}=req.body;
         if(!email || !password){
@@ -111,7 +123,8 @@ module.exports.forgotPassword1=async(req,res)=>{
         throw new ApiError(500,error?.message || "Something went wrong while forgot password")
     }
 }
-module.exports.forgotPassword=async(req,res)=>{
+// module.exports.
+const forgotPassword=async(req,res)=>{
     try {
         const {email}=req.body;
         if(!email){
@@ -134,7 +147,8 @@ if(!send_Email){
         throw new ApiError(500,error?.message || "Something went wrong while forgot password")
     }
 }
-module.exports.resetPassword=async(req,res)=>{
+// module.exports.
+const resetPassword=async(req,res)=>{
     try {
         const {token,password}=req.body;
         // if(!token || !password){
@@ -187,6 +201,7 @@ module.exports.resetPassword=async(req,res)=>{
 
 // }
 
+
 const generateAccessAndRefreshToken = async (userId) => {
     try {
 
@@ -206,7 +221,7 @@ const generateAccessAndRefreshToken = async (userId) => {
         // console.log(user._id);
         // console.log(accessToken);
 
-        return { accessToken, refreshToken };
+        return { accessToken, refreshToken ,accessTokenExpiresIn:accessToken.expiresIn,refreshTokenExpiresIn:refreshToken.expiresIn};
 
     } catch (error) {
         console.log("error in genrating token : ", error);
@@ -217,7 +232,8 @@ const generateAccessAndRefreshToken = async (userId) => {
     }
 };
 
-module.exports.loginUser = async (req, res) => {
+// module.exports.
+const loginUser = async (req, res) => {
     const { email, username, password } = req.body
     try {
 
@@ -241,6 +257,7 @@ module.exports.loginUser = async (req, res) => {
             httpOnly: true,
             // secure:true,
             sameSite: "strict",
+            maxAge: 24 * 60 * 60 * 1000
         }
         // console.log("Tokens after generating ", accessToken, "\n ", refreshToken);
 
@@ -260,12 +277,12 @@ module.exports.loginUser = async (req, res) => {
             )
     } catch (error) {
         console.log("error in login user", error.message)
-        throw new ApiError(401, error?.message || "Invalid access token ")
-
+        return res.status(500).json({ message: error?.message || "Invalid access token ", success: false })
     }
 }
 
-module.exports.logoutUser = async (req, res) => {
+// module.exports.
+const logoutUser = async (req, res) => {
     try {
 
         const { refreshToken, accessToken } = req?.cookies || ""
@@ -291,3 +308,13 @@ module.exports.logoutUser = async (req, res) => {
     }
 
 }
+
+module.exports={
+    registerUser,
+    verifyUser,
+    loginUser,
+    logoutUser,
+    forgotPassword,
+    resetPassword,
+    generateAccessAndRefreshToken
+};

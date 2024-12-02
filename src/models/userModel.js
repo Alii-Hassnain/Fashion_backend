@@ -62,8 +62,8 @@ userSchema.pre("findOneAndUpdate", async function (next) {
 userSchema.methods.verifyToken = async function (token) {
     return await jwt.verify(token, process.env.REFRESH_TOKEN_SECRET)
 }
-userSchema.methods.generateAccessToken = function () {
-    return jwt.sign(
+userSchema.methods.generateAccessToken = async function () {
+    return await jwt.sign(
         {
             _id: this._id,
             email: this.email,

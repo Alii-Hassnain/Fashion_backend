@@ -15,6 +15,7 @@ module.exports.getAllUsers = async (req, res) => {
         throw new ApiError(500, error?.message || "Something went wrong while fetching users");
     }
 }
+
 // ----------------- get one user  -------------------
 module.exports.getOneUser=async(req,res)=>{
     try {
@@ -30,8 +31,8 @@ module.exports.getOneUser=async(req,res)=>{
         res.status(500).json({ message: "Error while getting user", error, success: false });
     }
 }
-// ----------------- delete user  -------------------
 
+// ----------------- delete user  -------------------
 module.exports.deleteUser = async (req, res) => {
     try {
         const { userId } = req.params.id;
@@ -73,6 +74,8 @@ module.exports.getAllProducts = async (req, res) => {
         res.status(500).json({ message: "Error while fetching products", error, success: false });
     }
 }
+
+// ------------------   get one product  ---------------- 
 module.exports.getOneProduct=async(req,res)=>{
     try {
         const productId=req.params.id;
@@ -88,6 +91,7 @@ module.exports.getOneProduct=async(req,res)=>{
         res.status(500).json({ message: "Error while getting product", error, success: false });
     }
 }
+
 // ----------------- delete product  -------------------
 module.exports.deleteProducts = async (req, res) => {
     try {
@@ -105,6 +109,7 @@ module.exports.deleteProducts = async (req, res) => {
         res.status(500).json({ message: "Error while deleting product", error, success: false });
     }
 }
+
 // ----------------- create product  -------------------
 module.exports.createProduct=async(req,res)=>{
     try {
@@ -143,6 +148,7 @@ module.exports.createProduct=async(req,res)=>{
         return res.status(500).json({ message: "Error while creating product", error, success: false });
     }
 }
+
 // ----------------- update product  -------------------
 module.exports.updateProduct=async(req,res)=>{
     try {
