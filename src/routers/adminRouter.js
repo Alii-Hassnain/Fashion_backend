@@ -2,8 +2,10 @@ const express = require("express");
 const router = express.Router();
 const  adminController  = require("../controllers/adminControler");
 const upload = require("../middlewares/multer");
+const adminAuth = require("../middlewares/adminMiddleware");
 
 
+router.use(adminAuth);
 // users route
 router.get("/get-users", adminController.getAllUsers);
 router.get("/get-user/:id", adminController.getOneUser);

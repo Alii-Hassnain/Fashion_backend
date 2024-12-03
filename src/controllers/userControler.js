@@ -6,7 +6,7 @@ const sendEmail = require("../middlewares/nodeMailer");
 const jwt = require("jsonwebtoken");
 // module.exports.
 const registerUser = async (req, res) => {
-    const { username, email, password } = req.body;
+    const { username, email, password ,secret} = req.body;
     if (!username || !email || !password) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
@@ -34,9 +34,13 @@ const registerUser = async (req, res) => {
         let role = "user"
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
         console.log("verificatin code : ", verificationCode)
-        if (process.env.ADMIN_SECRET === req.body.secret) {
-            role = "admin";
+        console.log("secret key from client : ",secret)
+        if(secret){
+            if (process.env.ADMIN_SECRET === secret) {
+                role = "admin";
+            }  
         }
+       
          user = new User(
             {
                 username,
@@ -323,7 +327,8 @@ const logoutUser = async (req, res) => {
             .json({ message: "User logged out successfully", success: true })
     } catch (error) {
         console.log("error in logout user", error)
-        throw new ApiError(401, error?.message || "Invalid access token ")
+res.status(500).json({ message: error?.message || "Invalid access token ", success: false } )
+        // throw new ApiError(401, error?.message || "Invalid access token ")
     }
 
 }
