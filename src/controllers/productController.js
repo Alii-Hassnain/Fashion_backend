@@ -1,9 +1,23 @@
-const products = require("../dummyData/productsTestData.js");
-const Product = require("../models/productModel");
+const {Product} = require("../models/productModel");
 
-module.exports.getAllProducts = (req, res) => {
-  const product = products;
-  res.status(200).json(product);
+module.exports.getAllProducts = async (req, res) => {
+
+  try {
+      const products = await Product.find()
+      console.log(products)
+      if(!products){
+        return res.status(404).json({ message: "Products not found", success: false });}
+
+      return res.status(200).json({ message: "Products fetched successfully", data: products, success: true });
+
+  } catch (error) {
+    console.log("error in fetching products : ", error)
+    res.status(500).json({ message: "Error while fetching products", error, success: false });
+  }
+  
+  // const product = products;
+  // res.status(200).json(product);
+
 };
 
 // module.exports.getAllProducts = async (req, res) => {

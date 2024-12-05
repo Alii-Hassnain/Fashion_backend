@@ -6,6 +6,9 @@ const adminAuth = require("../middlewares/adminMiddleware");
 
 
 router.use(adminAuth);
+// admin route
+router.get("/admin-details", adminController.adminDetails);
+
 // users route
 router.get("/get-users", adminController.getAllUsers);
 router.get("/get-user/:id", adminController.getOneUser);
