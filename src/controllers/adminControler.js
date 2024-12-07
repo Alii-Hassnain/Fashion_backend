@@ -119,11 +119,14 @@ module.exports.createProduct=async(req,res)=>{
         console.log("stock",stock);
         console.log("rating",rating);
         console.log("description",description);
-
+        console.log("file",req.file);
+        console.log("file path",req.file.path);
         
-        if(!title || !price || !stock || !rating || !description){
+        if(!title || !price || !stock || !description){
         return res.status(400).json({ message: "Please fill all the fields", success: false });
         }
+        
+        
         const file = req.file.path;
         console.log("file path :",file);
         const imageUrl = await uploadOnClouinary(file);

@@ -5,7 +5,7 @@ const upload = require("../middlewares/multer");
 const adminAuth = require("../middlewares/adminMiddleware");
 
 
-router.use(adminAuth);
+// router.use(adminAuth);
 // users route
 router.get("/get-users", adminController.getAllUsers);
 router.get("/get-user/:id", adminController.getOneUser);

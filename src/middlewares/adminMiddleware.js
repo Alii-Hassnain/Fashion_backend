@@ -3,7 +3,7 @@ const jwt=require("jsonwebtoken");
 
 const adminAuth=async(req,res,next)=>{
     try {
-            const token=req.cookies?.accessToken||req.headers.authorization.split(" ")[1];
+            const token=req.cookies?.accessToken||req.headers.authorization.split("")[1];
             if(!token){
                 return res.status(400).json({ message: "unAuthorized request Access denied", success: false });
             }
