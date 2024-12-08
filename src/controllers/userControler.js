@@ -281,6 +281,7 @@ const loginUser = async (req, res) => {
             // secure:true,
             sameSite: "strict",
             maxAge: 24 * 60 * 60 * 1000
+            // maxAge:60*2
         }
         // console.log("Tokens after generating ", accessToken, "\n ", refreshToken);
 

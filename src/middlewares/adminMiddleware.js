@@ -6,7 +6,7 @@ const adminAuth=async(req,res,next)=>{
             const token=req.cookies?.accessToken
             // req.headers.authorization.split("")[1];
             if(!token){
-                return res.status(400).json({ message: "unAuthorized request Access denied", success: false });
+                return res.status(400).json({ message: "UnAuthorized request!  Access denied: Admins only", success: false });
             }
             const decodedToken=await jwt.verify(token,process.env.ACCESS_TOKEN_SECRET);
             if(!decodedToken){
