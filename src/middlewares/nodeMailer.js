@@ -39,7 +39,7 @@ const sendEmail=async(email,type,username,link)=>{
     }
 
     await transporter.sendMail({
-      from: '"CodeByAqeel 👻" <fashionfyp144171@gmail.com>', // sender address
+      from: '"CoderByArkamides 👻" <fashionfyp144171@gmail.com>', // sender address
       to:email, // sender address
       subject,
       html,
