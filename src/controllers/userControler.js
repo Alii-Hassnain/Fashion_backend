@@ -69,7 +69,7 @@ const registerUser = async (req, res) => {
 
         return res
             .status(201)
-            .json({ message: "User registered successfully", data: userWithoutPassword, success: true })
+            .json({ message: " Registered successfully ", data: userWithoutPassword, success: true })
 
     } catch (error) {
         if (user && user._id) {
@@ -110,16 +110,21 @@ const verifyUser = async (req, res) => {
         user.isVerified = true;
         user.verificationCode = undefined;
         const updatedUser = await user.save();
+        if(updatedUser.role==="admin"){
+            return res
+                .status(200)
+                .json({ message: "Admin verified successfully", success: true, data: updatedUser });
+        }
 
         return res
             .status(200)
             .json({ message: "User verified successfully", success: true, data: updatedUser });
     } catch (error) {
         await User.findByIdAndDelete(updatedUser._id);
-        console.log("error while verifying user", error)
+        console.log("error while verifying ", error)
         res
             .status(500)
-            .json({ message: "Error while verifying user", error, success: false });
+            .json({ message: "Error while verifying ", error, success: false });
 
     }
 }
@@ -288,6 +293,22 @@ const loginUser = async (req, res) => {
         const userWithoutPassword = await User.findById(user._id).select("-password")
         const userName=userWithoutPassword.username
         console.log("after login user : ", userWithoutPassword);
+        if(userWithoutPassword.role==="admin"){
+            return res
+            .status(200)
+            .cookie("refreshToken", refreshToken, option)
+            .cookie("accessToken", accessToken, option)
+            .cookie("username",userWithoutPassword.username,option)
+            .json(
+                {
+                    message: "User logged in successfully",
+                    data: userWithoutPassword,
+                    username: userWithoutPassword.username,
+                    token: accessToken,
+                    success: true,
+                }
+            )
+        }
 
         res
             .status(200)
@@ -329,7 +350,7 @@ const logoutUser = async (req, res) => {
             .status(200)
             .clearCookie("refreshToken", refreshToken, { maxAge: 0, httpOnly: true })
             .clearCookie("accessToken", accessToken, { maxAge: 0, httpOnly: true })
-            .clearCookie("userName", userName, { maxAge: 0, httpOnly: true })
+            .clearCookie("username", username, { maxAge: 0, httpOnly: true })
 
             .json({ message: "User logged out successfully", success: true })
     } catch (error) {

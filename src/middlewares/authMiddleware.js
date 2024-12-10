@@ -6,15 +6,16 @@ module.exports.verifyToken = async (req, res, next) => {
     try {
         const token = req.cookies?.accessToken
         if (!token) {
-            throw new ApiError(401, "Access token not found")
+            // throw new ApiError(401, "Access token not found")
+            return res.status(401).json({ message: "Access token not found", success: false })
         }
         const decodedToken = await jwt.verify(token, process.env.ACCESS_TOKEN_SECRET)
         if (!decodedToken) {
-            throw new ApiError(401, "The access token is invalid")
+            return res.status(401).json({ message: "The access token is invalid", success: false })
         }
         const user = await User.findById(decodedToken?._id).select("-password -refreshToken");
         if (!user) {
-            throw new ApiError(401, "Token not found")
+            return res.status(401).json({ message: "Token not found", success: false })
         }
 
         req.user = user;
@@ -22,6 +23,6 @@ module.exports.verifyToken = async (req, res, next) => {
 
     }
     catch (error) {
-        throw new ApiError(401, error?.message || "Invalid access token")
+        return res.status(401).json({ message: error?.message || "Invalid access token", success: false })
     }
 }
