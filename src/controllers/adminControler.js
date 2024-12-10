@@ -2,6 +2,16 @@ const { User } = require("../models/userModel");
 const { Product } = require("../models/productModel");
 const { uploadOnClouinary } = require("../Utils/Cloudnary");
 
+module.exports.adminDetails=async(req,res)=>{
+        const admin = await User.findById(req.admin._id);
+        if(!admin){
+            return res.status(404).json({ message: "Admin not found", success: false });
+        }
+        // const adminName=admin.username;
+
+    return res.status(200).json({ message: "Admin details fetched successfully", data: req.admin, userName:req.admin.username,success: true });
+}
+
 // ----------------- get all users  -------------------
 module.exports.getAllUsers = async (req, res) => {
     try {
@@ -58,6 +68,7 @@ module.exports.deleteUser = async (req, res) => {
             .json({ message: "Error while deleting user", error, success: false });
     }
 }
+
 
 // ----------------- get all products  -------------------
 module.exports.getAllProducts = async (req, res) => {

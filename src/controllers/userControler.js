@@ -281,15 +281,19 @@ const loginUser = async (req, res) => {
             // secure:true,
             sameSite: "strict",
             maxAge: 24 * 60 * 60 * 1000
+            // maxAge:60*2
         }
         // console.log("Tokens after generating ", accessToken, "\n ", refreshToken);
 
         const userWithoutPassword = await User.findById(user._id).select("-password")
+        const userName=userWithoutPassword.username
         console.log("after login user : ", userWithoutPassword);
+
         res
             .status(200)
             .cookie("refreshToken", refreshToken, option)
             .cookie("accessToken", accessToken, option)
+            .cookie("userName", userName, option)
             .json(
                 {
                     message: "User logged in successfully",
@@ -308,7 +312,7 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
     try {
 
-        const { refreshToken, accessToken } = req?.cookies || ""
+        const { refreshToken, accessToken, userName } = req?.cookies || ""
         if (!(refreshToken && accessToken)) {
             res.redirect("/login")
             throw new ApiError(404, "User not found first login ")
@@ -323,6 +327,7 @@ const logoutUser = async (req, res) => {
             .status(200)
             .clearCookie("refreshToken", refreshToken, { maxAge: 0, httpOnly: true })
             .clearCookie("accessToken", accessToken, { maxAge: 0, httpOnly: true })
+            .clearCookie("userName", userName, { maxAge: 0, httpOnly: true })
 
             .json({ message: "User logged out successfully", success: true })
     } catch (error) {
