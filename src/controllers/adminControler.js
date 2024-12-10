@@ -3,6 +3,7 @@ const { Product } = require("../models/productModel");
 const { uploadOnClouinary } = require("../Utils/Cloudnary");
 
 module.exports.adminDetails=async(req,res)=>{
+    
         const admin = await User.findById(req.admin._id);
         if(!admin){
             return res.status(404).json({ message: "Admin not found", success: false });

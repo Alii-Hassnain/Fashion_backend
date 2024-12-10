@@ -313,7 +313,7 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
     try {
 
-        const { refreshToken, accessToken, userName } = req?.cookies || ""
+        const { refreshToken, accessToken, userName } = req?.cookies
         if (!(refreshToken && accessToken)) {
             res.redirect("/login")
             // throw new ApiError(404, "User not found first login ")
