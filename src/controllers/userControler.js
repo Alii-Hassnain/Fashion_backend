@@ -293,13 +293,14 @@ const loginUser = async (req, res) => {
             .status(200)
             .cookie("refreshToken", refreshToken, option)
             .cookie("accessToken", accessToken, option)
-            .cookie("userName", userName, option)
+            .cookie("username",userWithoutPassword.username,option)
             .json(
                 {
                     message: "User logged in successfully",
                     data: userWithoutPassword,
-                    success: true,
+                    username: userWithoutPassword.username,
                     token: accessToken,
+                    success: true,
                 }
             )
     } catch (error) {
@@ -315,7 +316,8 @@ const logoutUser = async (req, res) => {
         const { refreshToken, accessToken, userName } = req?.cookies || ""
         if (!(refreshToken && accessToken)) {
             res.redirect("/login")
-            throw new ApiError(404, "User not found first login ")
+            // throw new ApiError(404, "User not found first login ")
+            return res.status(404).json({ message: "User not found first login ", success: false })
         }
         console.log("refresh token of login user :  ", refreshToken)
         const user = await User.findByIdAndUpdate(
@@ -338,6 +340,34 @@ res.status(500).json({ message: error?.message || "Invalid access token ", succe
 
 }
 
+const verifySession = async (req, res) => {
+    try {
+      const { refreshToken ,accessToken} = req.cookies ;
+      if (! accessToken) {
+        return res.status(401).json({ success: false, message: "No active session" });
+      }
+  
+      const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+      console.log("DECODED : ",decoded)
+      if (!decoded) {
+        return res.status(401).json({ success: false, message: "Invalid session" });
+      }
+  
+      const user = await User.findById(decoded._id);
+      console.log("login in user : ",user)
+      if (!user) {
+        return res.status(404).json({ success: false, message: "User not found" });
+      }
+  
+      return res.status(200).json({ success: true, message: "User is logged in" });
+    } catch (error) {
+      console.error("Session verification error:", error);
+      return res.status(500).json({ success: false, message: "Internal server error" });
+    }
+  };
+  
+  
+
 module.exports = {
     registerUser,
     verifyUser,
@@ -345,5 +375,6 @@ module.exports = {
     logoutUser,
     forgotPassword,
     resetPassword,
-    generateAccessAndRefreshToken
+    generateAccessAndRefreshToken,
+    verifySession
 };
