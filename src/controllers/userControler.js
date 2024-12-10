@@ -301,7 +301,7 @@ const loginUser = async (req, res) => {
             .cookie("username",userWithoutPassword.username,option)
             .json(
                 {
-                    message: "User logged in successfully",
+                    message: "Admin logged in successfully",
                     data: userWithoutPassword,
                     username: userWithoutPassword.username,
                     token: accessToken,
@@ -334,7 +334,7 @@ const loginUser = async (req, res) => {
 const logoutUser = async (req, res) => {
     try {
 
-        const { refreshToken, accessToken, userName } = req?.cookies || ""
+        const { refreshToken, accessToken, username } = req?.cookies || ""
         if (!(refreshToken && accessToken)) {
             res.redirect("/login")
             // throw new ApiError(404, "User not found first login ")
@@ -346,6 +346,15 @@ const logoutUser = async (req, res) => {
             { $set: { refreshToken: "" } },
             { new: true }
         )
+        if(user.role==="admin"){
+            return res
+            .status(200)
+            .clearCookie("refreshToken", refreshToken, { maxAge: 0, httpOnly: true })
+            .clearCookie("accessToken", accessToken, { maxAge: 0, httpOnly: true })
+            .clearCookie("username", username, { maxAge: 0, httpOnly: true })
+
+            .json({ message: "Admin logged out successfully", success: true })
+        }
         return res
             .status(200)
             .clearCookie("refreshToken", refreshToken, { maxAge: 0, httpOnly: true })
