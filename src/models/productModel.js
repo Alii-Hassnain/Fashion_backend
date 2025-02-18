@@ -3,10 +3,6 @@ const Schema = mongoose.Schema;
 // const AutoIncrement = require('mongoose-sequence')(mongoose);
 
 const productsSchema = new Schema({
-    // _id:{
-    //     type:Number,
-    //     default:0
-    // },
     title: {
         type: String,
         required: true,

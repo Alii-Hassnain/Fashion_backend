@@ -11,7 +11,8 @@ const tokenSchema=new Schema({
         type:String,
         required:true
     }
-},{typeStamp:true})
+},
+{timestamps:true})
 
 
 module.exports=mongoose.model("token",tokenSchema)

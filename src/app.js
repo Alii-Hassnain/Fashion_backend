@@ -4,16 +4,15 @@ const cookieParser=require('cookie-parser');
 const productsRouter=require('./routers/productsRouter');
 const userRouter=require('./routers/userRouter');
 const adminRouter=require('./routers/adminRouter');
+const cartRouter = require('./routers/cartRouter');
 const passport = require('passport');
 require("./config/google_strategy")
 
 const app=express();
 app.use(cors(
    {
-    origin:process.env.CORS_ORIGIN,
     origin:["http://localhost:5173","http://localhost:5174","http://localhost:3000"],
     credentials:true
-    
    } 
 ));
 
@@ -29,6 +28,7 @@ app.use(passport.initialize());
 app.use('/api',productsRouter);
 app.use('/user',userRouter);
 app.use('/admin',adminRouter);
+app.use('/api',cartRouter);
 
 
 // Google Authentication
@@ -51,19 +51,6 @@ app.get('/auth/google',
           sameSite: 'none',
           maxAge: 24 * 60 * 60 * 1000, 
         });
-        // res.cookie('accessTokenExpiresIn', accessTokenExpiresIn, {
-        //   httpOnly: true,
-        //   secure: true,
-        //   sameSite: 'none',
-        //   maxAge: 24 * 60 * 60 * 1000, 
-        // });
-        // res.cookie('refreshTokenExpiresIn', refreshTokenExpiresIn, {
-        //   httpOnly: true,
-        //   secure: true,
-        //   sameSite: 'none',
-        //   maxAge: 24 * 60 * 60 * 1000,
-        // })  
-        // Successful authentication, redirect home.
         res.redirect (`${process.env.CLIENT_URL}`);
    
     });

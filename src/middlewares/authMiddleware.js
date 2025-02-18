@@ -17,10 +17,8 @@ module.exports.verifyToken = async (req, res, next) => {
         if (!user) {
             return res.status(401).json({ message: "Token not found", success: false })
         }
-
         req.user = user;
         next();
-
     }
     catch (error) {
         return res.status(401).json({ message: error?.message || "Invalid access token", success: false })

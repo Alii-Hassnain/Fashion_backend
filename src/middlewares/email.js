@@ -3,8 +3,7 @@ const {verification_Email_Template}=require("../utils/emailTemplate")
 const sendVerificationCode=async(email,verificationCode)=>{
     try {
         const response = await transporter.sendMail({
-            from: '"CodeBy -> Akeel badsha ( full ee ) 👻" <fashionfyp144171@gmail.com>',
-            // <${process.env.EMAIL_NAME}>', // sender address
+            from: '"Ali Hassnain Founder 👻" <fashionshop@gmail.com>',
             to: email, // list of receivers
             subject: "Hello ✔ Verify your email", // Subject line
             text: "verify your email", // plain text body
