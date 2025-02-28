@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express=require('express');
 const cors=require('cors');
 const cookieParser=require('cookie-parser');
@@ -5,8 +6,12 @@ const productsRouter=require('./routers/productsRouter');
 const userRouter=require('./routers/userRouter');
 const adminRouter=require('./routers/adminRouter');
 const cartRouter = require('./routers/cartRouter');
+const orderRouter = require("./routers/orderRouter");
 const passport = require('passport');
-require("./config/google_strategy")
+require("./config/google_strategy");
+
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+
 
 const app=express();
 app.use(cors(
@@ -29,6 +34,27 @@ app.use('/api',productsRouter);
 app.use('/user',userRouter);
 app.use('/admin',adminRouter);
 app.use('/api',cartRouter);
+app.use("/api",orderRouter);
+
+app.post("/create-payment-intent", async (req, res) => {
+  try {
+    const { amount } = req.body; // Amount in cents
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: "pkr",
+      // payment_method_types: ["card"],
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
+
+
+
 
 
 // Google Authentication
