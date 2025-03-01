@@ -2,8 +2,7 @@
 const { Product } = require("../models/productModel");
   
 // router.get('/api/products', 
-const 
-searchProduct = async (req, res) => {
+const searchProduct = async (req, res) => {
   try {
     const { search, category, priceMin, priceMax } = req.query;
     let query = {};
