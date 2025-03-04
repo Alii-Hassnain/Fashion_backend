@@ -36,6 +36,14 @@ app.use('/admin',adminRouter);
 app.use('/api',cartRouter);
 app.use("/api",orderRouter);
 
+app.post("/api/webhook", (req, res) => {
+  console.log("Received Webhook Data:", req.body);
+
+  // Response back to Botpress
+  res.json({ reply: `You said: ${req.body.userMessage}` });
+});
+
+
 app.post("/create-payment-intent", async (req, res) => {
   try {
     const { amount } = req.body; // Amount in cents
@@ -82,10 +90,14 @@ app.get('/auth/google',
     });
 
 app.get('/',(req,res)=>{
-    res.send('Hello from server');
+    // res.send('Hello from server');
+    res.json({mesg:"The name of the CEO is Ali Hassnain"})
 })
 
-
-
+app.post("/api/webhook", (req, res) => {
+  console.log("Received  Data:", req.body);
+  res.json({message:req.body})
+})
+  // Response back to Botpress
 
 module.exports={app};
