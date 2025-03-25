@@ -124,7 +124,7 @@ module.exports.deleteProducts = async (req, res) => {
 // ----------------- create product  -------------------
 module.exports.createProduct=async(req,res)=>{
     try {
-        const {title,price,stock,rating,description,catogery,gender}=req.body;
+        const {title,price,stock,rating,description,catogery,gender,size}=req.body;
         console.log("title",title);
         console.log("price",price);
         console.log("stock",stock);
@@ -133,7 +133,7 @@ module.exports.createProduct=async(req,res)=>{
         console.log("file",req.file);
         console.log("file path",req.file.path);
         
-        if(!title || !price || !stock || !description,!catogery, !gender){
+        if(!title || !price || !stock || !description,!catogery, !gender,!size){
         return res.status(400).json({ message: "Please fill all the fields", success: false });
         }
         
@@ -154,6 +154,7 @@ module.exports.createProduct=async(req,res)=>{
             catogery,
             gender,
             description,
+            size
         });
         const product = await newProduct.save();
         return res

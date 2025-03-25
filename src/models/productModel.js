@@ -35,7 +35,13 @@ const productsSchema = new Schema({
         required: true,
         enum:["men","women","kids"]    
     },
+    size:{
+        type: String,
+        enum:["S","M","L","XL","2XL"],
+        required: true
+    },
     description: String,
+
 }, { timestamps: true })
 // productsSchema.plugin(AutoIncrement, { id: '1', inc_field: '_id' });
 
