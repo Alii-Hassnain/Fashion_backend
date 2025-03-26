@@ -121,7 +121,7 @@ const createProducts = async (req, res) => {
     }
     const localPath = req.file.path;
     console.log(localPath);
-    const { title, price, stock, rating, description, category,gender } = req.body;
+    const { title, price, stock, rating, description, category,gender,variants } = req.body;
     const product = new Product({
       title,
       price,
@@ -129,6 +129,7 @@ const createProducts = async (req, res) => {
       rating,
       description,
       category,
+      variants
     });
     const newProduct = await product.save();
     console.log(newProduct);

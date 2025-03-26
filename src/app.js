@@ -44,22 +44,22 @@ app.use("/api",orderRouter);
 // });
 
 
-// app.post("/create-payment-intent", async (req, res) => {
-//   try {
-//     const { amount } = req.body; // Amount in cents
-//     const paymentIntent = await stripe.paymentIntents.create({
-//       amount,
-//       currency: "pkr",
-//       // payment_method_types: ["card"],
-//       automatic_payment_methods: {
-//         enabled: true,
-//       },
-//     });
-//     res.json({ clientSecret: paymentIntent.client_secret });
-//   } catch (error) {
-//     res.status(500).json({ error: error.message });
-//   }
-// });
+app.post("/create-payment-intent", async (req, res) => {
+  try {
+    const { amount } = req.body; // Amount in cents
+    const paymentIntent = await stripe.paymentIntents.create({
+      amount,
+      currency: "pkr",
+      // payment_method_types: ["card"],
+      automatic_payment_methods: {
+        enabled: true,
+      },
+    });
+    res.json({ clientSecret: paymentIntent.client_secret });
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
+});
 
 
 

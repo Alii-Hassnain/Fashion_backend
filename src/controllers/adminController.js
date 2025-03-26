@@ -124,20 +124,19 @@ module.exports.deleteProducts = async (req, res) => {
 // ----------------- create product  -------------------
 module.exports.createProduct=async(req,res)=>{
     try {
-        const {title,price,stock,rating,description,catogery,gender,size}=req.body;
+        const {title,price,rating,description,catogery,gender,size,variants}=req.body;
         console.log("title",title);
         console.log("price",price);
-        console.log("stock",stock);
+        // console.log("stock",stock);
         console.log("rating",rating);
         console.log("description",description);
         console.log("file",req.file);
         console.log("file path",req.file.path);
+
         
-        if(!title || !price || !stock || !description,!catogery, !gender,!size){
+        if(!title || !price  || !description,!catogery, !gender,!size,!variants){
         return res.status(400).json({ message: "Please fill all the fields", success: false });
         }
-        
-        
         const file = req.file.path;
         console.log("file path :",file);
         const imageUrl = await uploadOnClouinary(file);
@@ -149,12 +148,12 @@ module.exports.createProduct=async(req,res)=>{
             title,
             product_image:imageUrl?.url || "",
             price,
-            stock,
             rating,
             catogery,
             gender,
             description,
-            size
+            size,
+            variants
         });
         const product = await newProduct.save();
         return res
@@ -170,19 +169,32 @@ module.exports.createProduct=async(req,res)=>{
 module.exports.updateProduct=async(req,res)=>{
     try {
         const productId  = req.params.id;
+        const variants = req.body?.variants;
         if(!productId){
             return res.status(400).json({ message: "Product id is required", success: false });}
-            const product=await Product.findOneAndUpdate(
+        const product = await Product.findById(productId);
+        if (!product) {
+            return res.status(404).json({ message: "Product not found aginst this id", success: false });
+        }
+            if (variants) {
+                variants.forEach((variant) => {
+                    const existingVariant = product.variants.find(v => v.size === variant.size);
+                    if (existingVariant) {
+                        existingVariant.quantity = variant.quantity;
+                    } else {
+                        product.variants.push(variant);
+                    }
+                });
+            }
+            
+            const updatedProduct=await Product.findOneAndUpdate(
                 {_id:productId},
                 req.body,
                 {new:true}
             )
-            if (!product){
-                return res.status(404).json({ message: "Product not found aginst this id", success: false });
-            }
             return res
             .status(200)
-            .json({ message: "Product updated successfully", success: true ,data:product});
+            .json({ message: "Product updated successfully", success: true ,data:updatedProduct});
 
 
     } catch (error) {

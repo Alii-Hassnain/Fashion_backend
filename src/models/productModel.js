@@ -21,25 +21,32 @@ const productsSchema = new Schema({
         type: String,
         required: true,
     },
-    stock: {
-        type: Number,
-        default: 0
-    },
+    // stock: {
+    //     type: Number,
+    //     default: 0
+    // },
     category: {
         type: String,
         required: true,
-        enum: ["men", "women", "kids"]
     },
     gender:{
         type: String,
         required: true,
         enum:["men","women","kids"]    
     },
-    size:{
-        type: String,
-        enum:["S","M","L","XL","2XL"],
-        required: true
-    },
+    variants: [
+        {
+          size: {
+            type: String,
+            enum: ["S", "M", "L", "XL", "2XL"],
+            required: true,
+          },
+          quantity: {
+            type: Number,
+            default: 0,
+          },
+        },
+      ],
     description: String,
 
 }, { timestamps: true })
