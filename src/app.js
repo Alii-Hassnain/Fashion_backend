@@ -10,7 +10,9 @@ const orderRouter = require("./routers/orderRouter");
 const passport = require('passport');
 require("./config/google_strategy");
 
-//const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+// const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
+const stripe = require("stripe")('sk_test_51Qt5f1IAryIsUHT2YN3ljJ4aLne5FHULLQQZxiDkTZNljoG5f45rKGnYwaMCA4k4GqUZ8F8Q3QVlF1FrVLbpm4DG00hoCK6VKD');
+
 
 
 const app=express();
@@ -49,7 +51,7 @@ app.post("/create-payment-intent", async (req, res) => {
     const { amount } = req.body; // Amount in cents
     const paymentIntent = await stripe.paymentIntents.create({
       amount,
-      currency: "pkr",
+      currency: "usd",
       // payment_method_types: ["card"],
       automatic_payment_methods: {
         enabled: true,
@@ -61,11 +63,6 @@ app.post("/create-payment-intent", async (req, res) => {
   }
 });
 
-
-
-
-
-// Google Authentication
 app.get('/auth/google',
     passport.authenticate('google', {session:false, scope: ['profile', 'email'] }));
   

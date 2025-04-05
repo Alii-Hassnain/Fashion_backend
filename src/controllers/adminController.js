@@ -124,17 +124,21 @@ module.exports.deleteProducts = async (req, res) => {
 // ----------------- create product  -------------------
 module.exports.createProduct=async(req,res)=>{
     try {
-        const {title,price,rating,description,catogery,gender,size,variants}=req.body;
+        const {title,price,rating,description,category,gender,variants}=req.body;
         console.log("title",title);
         console.log("price",price);
         // console.log("stock",stock);
         console.log("rating",rating);
         console.log("description",description);
         console.log("file",req.file);
+        console.log("category",category);
+        console.log("gender",gender);
+        // console.log("size",size);
+        console.log("variants",variants);
         console.log("file path",req.file.path);
 
         
-        if(!title || !price  || !description,!catogery, !gender,!size,!variants){
+        if(!title || !price  || !description,!category, !gender,!variants){
         return res.status(400).json({ message: "Please fill all the fields", success: false });
         }
         const file = req.file.path;
@@ -143,17 +147,18 @@ module.exports.createProduct=async(req,res)=>{
         if(!imageUrl){
             return res.status(400).json({ message: "Error while uploading image", success: false });
         }
+        let parsedVariants = Array.isArray(variants) ? variants : JSON.parse(variants);
+
         console.log("image url : ",imageUrl.url);
         const newProduct=new Product({
             title,
             product_image:imageUrl?.url || "",
             price,
             rating,
-            catogery,
+            category,
             gender,
             description,
-            size,
-            variants
+            variants:parsedVariants,
         });
         const product = await newProduct.save();
         return res

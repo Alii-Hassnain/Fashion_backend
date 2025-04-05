@@ -16,10 +16,16 @@ const OrderSchema = new mongoose.Schema(
             ref: "products",
             required: true,
           },
+          size: {
+            type: String,
+            enum: ["S", "M", "L", "XL", "2XL"],
+            required: true,
+          },
           quantity: {
             type: Number,
             required: true,
-          },
+          }
+
         },
       ],
       required: true, // Ensures the field exists
@@ -36,7 +42,7 @@ const OrderSchema = new mongoose.Schema(
     totalQuantity: { type: Number, required: true },
     status: {
       type: String,
-      enum: ["Payment Verification","Pending", "Processing", "Shipped", "Delivered", "Canceled","Completed", "Returned"],
+      enum: ["Payment Verification", "Pending", "Processing", "Shipped", "Delivered", "Canceled", "Completed", "Returned"],
       default: "Pending",
     },
     paymentInfo: {
