@@ -122,53 +122,104 @@ module.exports.deleteProducts = async (req, res) => {
 }
 
 // ----------------- create product  -------------------
-module.exports.createProduct=async(req,res)=>{
-    try {
-        const {title,price,rating,description,category,gender,variants}=req.body;
-        console.log("title",title);
-        console.log("price",price);
-        // console.log("stock",stock);
-        console.log("rating",rating);
-        console.log("description",description);
-        console.log("file",req.file);
-        console.log("category",category);
-        console.log("gender",gender);
-        // console.log("size",size);
-        console.log("variants",variants);
-        console.log("file path",req.file.path);
+// module.exports.createProduct=async(req,res)=>{
+//     try {
+//         const {title,price,rating,description,category,gender,variants}=req.body;
+//         console.log("title",title);
+//         console.log("price",price);
+//         // console.log("stock",stock);
+//         console.log("rating",rating);
+//         console.log("description",description);
+//         console.log("file",req.file);
+//         console.log("category",category);
+//         console.log("gender",gender);
+//         // console.log("size",size);
+//         console.log("variants",variants);
+//         console.log("file path",req.file.path);
 
         
-        if(!title || !price  || !description,!category, !gender,!variants){
-        return res.status(400).json({ message: "Please fill all the fields", success: false });
-        }
-        const file = req.file.path;
-        console.log("file path :",file);
-        const imageUrl = await uploadOnClouinary(file);
-        if(!imageUrl){
-            return res.status(400).json({ message: "Error while uploading image", success: false });
-        }
-        let parsedVariants = Array.isArray(variants) ? variants : JSON.parse(variants);
+//         if(!title || !price  || !description,!category, !gender,!variants){
+//         return res.status(400).json({ message: "Please fill all the fields", success: false });
+//         }
+//         const file = req.file.path;
+//         console.log("file path :",file);
+//         const imageUrl = await uploadOnClouinary(file);
+//         if(!imageUrl){
+//             return res.status(400).json({ message: "Error while uploading image", success: false });
+//         }
+//         let parsedVariants = Array.isArray(variants) ? variants : JSON.parse(variants);
 
-        console.log("image url : ",imageUrl.url);
-        const newProduct=new Product({
-            title,
-            product_image:imageUrl?.url || "",
-            price,
-            rating,
-            category,
-            gender,
-            description,
-            variants:parsedVariants,
-        });
-        const product = await newProduct.save();
-        return res
-        .status(200)
-        .json({ message: "Product created successfully", success: true ,data:product});
-    } catch (error) {
-        console.log("error in create product",error)
-        return res.status(500).json({ message: "Error while creating product", error, success: false });
+//         console.log("image url : ",imageUrl.url);
+//         const newProduct=new Product({
+//             title,
+//             product_image:imageUrl?.url || "",
+//             price,
+//             rating,
+//             category,
+//             gender,
+//             description,
+//             variants:parsedVariants,
+//         });
+//         const product = await newProduct.save();
+//         return res
+//         .status(200)
+//         .json({ message: "Product created successfully", success: true ,data:product});
+//     } catch (error) {
+//         console.log("error in create product",error)
+//         return res.status(500).json({ message: "Error while creating product", error, success: false });
+//     }
+// }
+
+
+module.exports.createProduct = async (req, res) => {
+  try {
+    const { title, price, rating, category, gender, description, variants, product_image } = req.body;
+
+    let finalImageUrl = "";
+
+    // Case 1: If image is uploaded by user (multer file)
+    if (req.file) {
+      const cloudinaryResponse = await uploadOnClouinary(req.file.path);
+      if (!cloudinaryResponse) {
+        return res.status(500).json({ message: "Image Upload Failed" });
+      }
+      finalImageUrl = cloudinaryResponse.url;
     }
+
+    // Case 2: If user provided image URL directly
+    else if (product_image) {
+      finalImageUrl = product_image;
+    } else {
+      return res.status(400).json({ message: "Image is required (either file or link)" });
+    }
+    const parsedVariants = Array.isArray(variants) ? variants : JSON.parse(variants);
+    const product = await Product.create({
+      title,
+      price,
+      rating,
+      category,
+      gender,
+      description,
+      variants: parsedVariants,
+      product_image: finalImageUrl
+    });
+
+    return res.status(201).json({
+      success: true,
+      message: "Product Created Successfully",
+      product
+    });
+
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ message: "Internal Server Error" });
+  }
 }
+
+
+
+
+
 
 // ----------------- update product  -------------------
 module.exports.updateProduct=async(req,res)=>{

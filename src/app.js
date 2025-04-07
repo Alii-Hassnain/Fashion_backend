@@ -7,6 +7,7 @@ const userRouter=require('./routers/userRouter');
 const adminRouter=require('./routers/adminRouter');
 const cartRouter = require('./routers/cartRouter');
 const orderRouter = require("./routers/orderRouter");
+const reviewRouter = require('./routers/reviewRouter');
 const passport = require('passport');
 require("./config/google_strategy");
 
@@ -37,6 +38,8 @@ app.use('/user',userRouter);
 app.use('/admin',adminRouter);
 app.use('/api',cartRouter);
 app.use("/api",orderRouter);
+app.use("/api",reviewRouter)
+
 
 // app.post("/api/webhook", (req, res) => {
 //   console.log("Received Webhook Data:", req.body);
