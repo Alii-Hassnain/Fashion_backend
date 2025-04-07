@@ -56,7 +56,7 @@ const OrderSchema = new mongoose.Schema(
       mobileNumber: {
         type: String,
         required: true,
-        match: [/^\+92\s\d{4}\s\d{7}$/, "Invalid phone number format"], // ✅ Enforces format +92 XXXX XXXXXXX
+        match: [/^\+92\d{10}$/, "Invalid phone number format"], // ✅ Enforces format +92 XXXX XXXXXXX
       },
       address: { type: String, required: true },
     },

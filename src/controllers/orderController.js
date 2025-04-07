@@ -2,6 +2,7 @@ const { Order } = require("../models/orderModel");
 const { Product } = require("../models/productModel");
 const jwt = require("jsonwebtoken");
 const sendEmail = require("../middlewares/nodeMailer");
+const { sendWhatsAppMessage ,orderConfirmationMessage} = require("../Utils/whatsappClient");
 // const placeOrder = async (req, res) => {
 //   try {
 //     const { userId, cartItems, subtotal, shipping, totalPrice, totalQuantity, shippingAddress, paymentInfo } = req.body;
@@ -100,6 +101,7 @@ const sendEmail = require("../middlewares/nodeMailer");
 //   }
 // };
 
+
 const placeOrder = async (req, res) => {
   try {
     const {
@@ -112,8 +114,6 @@ const placeOrder = async (req, res) => {
       shippingAddress,
       paymentInfo,
     } = req.body;
-
-    // Loop through each item in cartItems
     for (let item of cartItems) {
       const product = await Product.findById(item.productId);
 
@@ -178,8 +178,6 @@ const placeOrder = async (req, res) => {
     });
   }
 };
-
-
 const getAllOrders = async (req, res) => {
   try {
     const orders = await Order.find()
@@ -374,6 +372,38 @@ const sendOrderEmail = async (req, res) => {
   }
 };
 
+const sendMessage = async (req, res) => {
+  try {
+    // const { phoneNumber, message } = req.body;
+    const { phoneNumber, customerName, orderId, totalPrice, paymentStatus, trackingLink, storeName, supportEmail, phoneNumberSupport } = req.body;
+console.log("phone no : ", phoneNumber);
+    if(!phoneNumber) {
+      return res.status(400).json({ message: "Phone number is required ", success: false });
+    }
+    const message = orderConfirmationMessage(customerName, orderId, totalPrice, paymentStatus, trackingLink, storeName, supportEmail, phoneNumberSupport);
+
+    const send_whatsapp = await sendWhatsAppMessage(phoneNumber, message);
+    if (send_whatsapp) {
+      return res
+        .status(200)
+        .json({ success: true, message: "WhatsApp message sent successfully!" });
+    } else {
+      return res
+        .status(500)
+        .json({ success: false, message: "Failed to send WhatsApp message." });
+    } 
+  }
+  catch (error) {
+    console.error("Error sending WhatsApp message:", error);
+    return res
+      .status(500)
+      .json({
+        message: "Server error while sending WhatsApp message",
+        success: false,
+        error: error.message,
+      });
+  }
+};
 module.exports = {
   placeOrder,
   getAllOrders,
@@ -381,4 +411,5 @@ module.exports = {
   getOrderById,
   getOrdersByUserId,
   sendOrderEmail,
+  sendMessage
 };
