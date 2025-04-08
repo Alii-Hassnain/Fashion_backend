@@ -1,6 +1,24 @@
 const { get } = require("mongoose");
 const { Review } = require("../models/reviewModel");
 const express = require('express');
+const { Product } = require('../models/productModel')
+
+const updateAverageRating = async (productId) => {
+    try {
+        // Step 1: Get all reviews for the product
+        const reviews = await Review.find({ productId });
+        // Step 2: Calculate the average rating
+        const totalRatings = reviews.reduce((acc, review) => acc + review.rating, 0);
+        const averageRating = reviews.length ? totalRatings / reviews.length : 0;
+
+        // Step 3: Update the product's averageRating field
+        await Product.findByIdAndUpdate(productId, { rating }, { new: true });
+
+        console.log(`Average rating for product ${productId} updated to ${averageRating}`);
+    } catch (error) {
+        console.error("Error updating average rating:", error);
+    }
+};
 
 const createReview= async (req, res) => {
     try {
@@ -22,8 +40,7 @@ const createReview= async (req, res) => {
             comment,
             rating,
           });
-
-
+          await updateAverageRating(productId);
             if (!review) {
                 return res.status(400).json({ message: "Unable to create review" , success : false});
             }
