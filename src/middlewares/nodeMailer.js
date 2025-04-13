@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const { verification_Email_Template ,orderConfirmationTemplate} = require("../Utils/emailTemplate");
+const { verification_Email_Template, orderConfirmationTemplate } = require("../Utils/emailTemplate");
 require("dotenv").config(); // Load environment variables from .env
 
 const transporter = nodemailer.createTransport({
@@ -14,7 +14,7 @@ const transporter = nodemailer.createTransport({
   // debug: true, // Enable debug output
 });
 
-const sendEmail = async (email, type, username, link,data) => {
+const sendEmail = async (email, type, username, link, data) => {
   try {
     let subject = "",
       text = "",
@@ -36,16 +36,16 @@ const sendEmail = async (email, type, username, link,data) => {
     else if (type === "order") {
       subject = "🎉 Order Confirmation - FashionVista";
       html = orderConfirmationTemplate(
-      data.customerName,
-      data.orderId,
-      data.totalPrice,
-      data.paymentStatus,
-      data.trackingLink,
-      data.storeName,
-      data.supportEmail,
-      data.phoneNumber)
-    } 
-     else {
+        data.customerName,
+        data.orderId,
+        data.totalPrice,
+        data.paymentStatus,
+        data.trackingLink,
+        data.storeName,
+        data.supportEmail,
+        data.phoneNumber)
+    }
+    else {
       throw new Error("Invalid email type");
     }
 

@@ -1,9 +1,14 @@
+const puppeteer = require('puppeteer-core'); // Use puppeteer-core instead of puppeteer
 
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
 
 const client = new Client({
     authStrategy: new LocalAuth(),  
+    puppeteer: {
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
+        args: ['--no-sandbox', '--disable-setuid-sandbox']
+    }
 });
 
 
