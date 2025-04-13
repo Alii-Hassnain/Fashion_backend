@@ -285,8 +285,8 @@ const loginUser = async (req, res) => {
 
         const option = {
             httpOnly: true, // Secure for refresh token
-            secure: isProduction, // HTTPS in production, HTTP locally
-            sameSite: isProduction ? "none" : false, // None for production, false locally
+            secure: true, // HTTPS in production, HTTP locally
+            sameSite: "none", // None for production, false locally
             maxAge: 24 * 60 * 60 * 1000, // 24 hours
             path: "/",
         };
