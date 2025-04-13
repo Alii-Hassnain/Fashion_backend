@@ -18,23 +18,22 @@ const stripe = require("stripe")('sk_test_51Qt5f1IAryIsUHT2YN3ljJ4aLne5FHULLQQZx
 
 
 const app = express();
-const corsOptions = {
-  origin: "*", // Allow all origins (use more restrictive setting in production)
-  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
-  credentials: true, // Allow credentials like cookies
-  preflightContinue: false // Pass the OPTIONS request to the next middleware
-};
+app.use(cors({
+  origin: "http://localhost:5173",   // your local frontend
+  credentials: true,                 // allow cookies/JWT
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
+}));
 
-// Use CORS middleware with the configured options
-app.use(cors(corsOptions));
-// Handle preflight (OPTIONS) requests
+// Allow preflight requests
+// Optional but safe for full control of preflight
 app.options("*", (req, res) => {
+  res.header("Access-Control-Allow-Origin", "http://localhost:5173");
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.sendStatus(200); // Respond with 200 OK
+  res.header("Access-Control-Allow-Credentials", "true");
+  res.sendStatus(200);
 });
-
 
 
 
