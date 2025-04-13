@@ -12,7 +12,7 @@ router.get("/admin-details", adminController.adminDetails);
 // users route
 router.get("/get-users", adminController.getAllUsers);
 router.get("/get-user/:id", adminController.getOneUser);
-router.delete("/delete-user/:id", adminController.deleteUser);
+router.delete("/delete-user/:userId", adminController.deleteUser);
 
 
 // products route
@@ -21,5 +21,8 @@ router.get("/get-product/:id", adminController.getOneProduct);
 router.delete("/delete-product/:id", adminController.deleteProducts);
 router.post("/create-product",upload.single("product_image"), adminController.createProduct);
 router.patch("/update-product/:id",adminController.updateProduct)
+
+// orders route
+router.get("/getAllUsersOrderSummary", adminController.getAllUsersOrderSummary);
 
 module.exports = router;

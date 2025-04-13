@@ -15,6 +15,11 @@ router.get('/get-allReviews', reviewController.getAllReviews);
 // protected route for admin only 
 router.get('/get-userReviews/:userId',adminAuth, reviewController.getUserReviews);
 router.delete('/delete-review/:reviewId',adminAuth, reviewController.deleteReview);
+router.get('/get-userReview/:title',reviewController.getUserReviewBYProductName);
+router.get('/review-byNameEmail/:emailOrUsername', reviewController.getReviewByUserEmailOrUsername);
+router.get('/review-byProductId/:productId', reviewController.getReviewBYProductId);
+
+
 module.exports = router;
 
 
