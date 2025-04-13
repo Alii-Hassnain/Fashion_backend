@@ -18,14 +18,11 @@ const stripe = require("stripe")('sk_test_51Qt5f1IAryIsUHT2YN3ljJ4aLne5FHULLQQZx
 
 
 const app = express();
-app.use(cors(
-  {
-    origin: "*", // allow all origins
-    methods: ["GET", "POST", "PUT", "DELETE"],
-
-    credentials: true
-  }
-));
+app.use(cors({
+  origin: "*",             // Allow all origins
+  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],  // Allow all methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allow all common headers
+}));
 
 
 
