@@ -43,21 +43,21 @@ const searchProduct = async (req, res) => {
     }
 
     const products = await Product.find(query).sort(sortOption).exec();
-    if(products.length === 0 || !products){
+    if (products.length === 0 || !products) {
       return res.status(404).json({
         success: false,
         message: "No products found",
         data: [],
-        count: 0
+        count: 0,
       });
-    }else {
-    res.status(200).json({
-      success: true,
-      count: products.length,
-      data: products,
-      message: "Products fetched successfully", 
-    });
-  }
+    } else {
+      res.status(200).json({
+        success: true,
+        count: products.length,
+        data: products,
+        message: "Products fetched successfully",
+      });
+    }
   } catch (error) {
     console.error("Error fetching products:", error);
     res.status(500).json({
@@ -94,6 +94,24 @@ const getSingleProduct = async (req, res) => {
     });
   }
 };
+const getRecommendedProduct = async (req, res) => {
+  const  productId  = req.params.id
+  try {
+    const product = await Product.findById(productId);
+    console.log(product);
+    
+    const RecommendedProduct = await Product.find({
+      category: product.category,
+      gender: product.gender,
+      _id: { $ne: productId },
+    }).limit(4);
+
+    res.json(RecommendedProduct);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error fetching recommendations");
+  }
+};
 
 const getAllProducts = async (req, res) => {
   try {
@@ -121,7 +139,16 @@ const createProducts = async (req, res) => {
     }
     const localPath = req.file.path;
     console.log(localPath);
-    const { title, price, stock, rating, description, category,gender,variants } = req.body;
+    const {
+      title,
+      price,
+      stock,
+      rating,
+      description,
+      category,
+      gender,
+      variants,
+    } = req.body;
     const product = new Product({
       title,
       price,
@@ -129,7 +156,7 @@ const createProducts = async (req, res) => {
       rating,
       description,
       category,
-      variants
+      variants,
     });
     const newProduct = await product.save();
     console.log(newProduct);
@@ -145,4 +172,5 @@ module.exports = {
   getSingleProduct,
   createProducts,
   searchProduct,
+  getRecommendedProduct
 };
