@@ -26,7 +26,7 @@ const corsOptions = {
   preflightContinue: true // Pass the OPTIONS request to the next middleware
 };
 
-
+app.use(cors(corsOptions));
 
 
 
