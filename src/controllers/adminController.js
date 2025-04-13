@@ -1,5 +1,6 @@
 const { User } = require("../models/userModel");
 const { Product } = require("../models/productModel");
+const { Order } = require("../models/orderModel");
 const { uploadOnClouinary } = require("../Utils/Cloudnary");
 
 module.exports.adminDetails=async(req,res)=>{
@@ -26,7 +27,105 @@ module.exports.getAllUsers = async (req, res) => {
     }
 }
 
+
+// module.exports.getAllUsersOrderSummary = async (req, res) => {
+//     try {
+//       // Step 1: Get all orders
+//       const orders = await Order.find();
+  
+//       // Step 2: Group orders by userId
+//       const userMap = new Map();
+  
+//       for (const order of orders) {
+//         const userId = order.userId.toString();
+//         if (!userMap.has(userId)) {
+//           userMap.set(userId, {
+//             totalOrders: 1,
+//             totalSpent: order.totalPrice
+//           });
+//         } else {
+//           const existing = userMap.get(userId);
+//           existing.totalOrders += 1;
+//           existing.totalSpent += order.totalPrice;
+//           userMap.set(userId, existing);
+//         }
+//       }
+  
+//       // Step 3: Fetch user details
+//       const userIds = Array.from(userMap.keys());
+//       const users = await User.find({ _id: { $in: userIds } }).select('username email');
+  
+//       // Step 4: Combine user info with order summary
+//       const result = users.map(user => {
+//         const summary = userMap.get(user._id.toString());
+//         return {
+//           username: user.username,
+//           email: user.email,
+//           totalOrders: summary.totalOrders,
+//           totalSpent: summary.totalSpent
+//         };
+//       });
+  
+//       res.json(result);
+  
+//     } catch (err) {
+//       console.error('Error fetching user order summary:', err);
+//       res.status(500).json({ message: 'Internal server error' });
+//     }
+//   };
+  
+
 // ----------------- get one user  -------------------
+module.exports.getAllUsersOrderSummary = async (req, res) => {
+    try {
+      // Step 1: Get all orders
+      const orders = await Order.find();
+  
+      // Step 2: Summarize orders by userId
+      const orderSummary = {};
+      for (const order of orders) {
+        const userId = order.userId.toString();
+        if (!orderSummary[userId]) {
+          orderSummary[userId] = {
+            userId,
+            totalOrders: 1,
+            totalSpent: order.totalPrice,
+          };
+        } else {
+          orderSummary[userId].userId = userId;
+          orderSummary[userId].totalOrders += 1;
+          orderSummary[userId].totalSpent += order.totalPrice;
+        }
+      }
+  
+      // Step 3: Get all users except admins
+      const users = await User.find({ role: { $ne: 'admin' } }).select('username email');
+  
+      // Step 4: Merge user info with order summary (default to 0)
+      const result = users.map(user => {
+        const summary = orderSummary[user._id.toString()] || {
+            userId: user._id.toString(),
+          totalOrders: 0,
+          totalSpent: 0,
+        };
+  
+        return {
+            userId: summary.userId,
+          username: user.username,
+          email: user.email,
+          totalOrders: summary.totalOrders,
+          totalSpent: summary.totalSpent,
+        };
+      });
+  
+      res.json({data:result, message: "Users order summary fetched successfully", success: true});
+    } catch (err) {
+      console.error('Error fetching user summary:', err);
+      res.status(500).json({ message: 'Internal server error', success: false });
+    }
+  };
+
+
 module.exports.getOneUser=async(req,res)=>{
     try {
         const userId=req.params.id;
@@ -45,7 +144,7 @@ module.exports.getOneUser=async(req,res)=>{
 // ----------------- delete user  -------------------
 module.exports.deleteUser = async (req, res) => {
     try {
-        const { userId } = req.params.id;
+        const { userId } = req.params;
         if (!userId) {
             return res
                 .status(400)
