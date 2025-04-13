@@ -1,27 +1,27 @@
-const puppeteer = require('puppeteer-core'); // Use puppeteer-core instead of puppeteer
+const puppeteer = require('puppeteer'); // Use puppeteer-core instead of puppeteer
 
 const { Client, LocalAuth } = require('whatsapp-web.js');
 const qrcode = require('qrcode');
-
+console.log(puppeteer.executablePath())
 const client = new Client({
-    authStrategy: new LocalAuth(),  
+    authStrategy: new LocalAuth(),
     puppeteer: {
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/google-chrome-stable',
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
+        executablePath: puppeteer.executablePath(), // Automatically points to installed Chromium
+        args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        headless: true
     }
 });
-
 
 client.on('qr', (qr) => {
     console.log('Please scan the QR code to log in for the first time:');
     // console.log(qr); 
 
-    
+
     qrcode.toString(qr, { type: 'terminal', small: true }, (err, url) => {
         if (err) console.log('Error generating QR code:', err);
         console.log(url); // Display the QR code in the terminal
     });
-   
+
 });
 
 client.on('ready', () => {
@@ -30,8 +30,8 @@ client.on('ready', () => {
 
 
 async function sendWhatsAppMessage(phoneNumber, message) {
-    const formattedNumber = phoneNumber.replace("+", ""); 
-    const number = formattedNumber + '@c.us'; 
+    const formattedNumber = phoneNumber.replace("+", "");
+    const number = formattedNumber + '@c.us';
     try {
         const chat = await client.getChatById(number);
 
@@ -78,4 +78,4 @@ const orderConfirmationMessage = (customerName, orderId, totalPrice, paymentStat
 
 
 
-module.exports = { sendWhatsAppMessage,orderConfirmationMessage };
+module.exports = { sendWhatsAppMessage, orderConfirmationMessage };
