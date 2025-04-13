@@ -281,13 +281,16 @@ const loginUser = async (req, res) => {
         }
 
         const { refreshToken, accessToken } = await generateAccessAndRefreshToken(user._id)
+        const isProduction = process.env.NODE_ENV === "production";
+
         const option = {
-            httpOnly: false,
-            secure: true,
-            sameSite: false,
-            maxAge: 24 * 60 * 60 * 1000
-            // maxAge:60*2
-        }
+            httpOnly: true, // Secure for refresh token
+            secure: isProduction, // HTTPS in production, HTTP locally
+            sameSite: isProduction ? "none" : false, // None for production, false locally
+            maxAge: 24 * 60 * 60 * 1000, // 24 hours
+            path: "/",
+        };
+
         // console.log("Tokens after generating ", accessToken, "\n ", refreshToken);
 
         const userWithoutPassword = await User.findById(user._id).select("-password")
