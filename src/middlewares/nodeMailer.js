@@ -1,5 +1,5 @@
 const nodemailer = require("nodemailer");
-const { verification_Email_Template ,orderConfirmationTemplate} = require("../utils/emailTemplate");
+const { verification_Email_Template ,orderConfirmationTemplate} = require("../Utils/emailTemplate");
 require("dotenv").config(); // Load environment variables from .env
 
 const transporter = nodemailer.createTransport({

@@ -1,5 +1,5 @@
 const {transporter} = require("./nodeMailer")
-const {verification_Email_Template}=require("../utils/emailTemplate")
+const {verification_Email_Template}=require("../Utils/emailTemplate")
 const sendVerificationCode=async(email,verificationCode)=>{
     try {
         const response = await transporter.sendMail({

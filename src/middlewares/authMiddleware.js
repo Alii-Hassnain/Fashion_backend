@@ -1,6 +1,6 @@
 const { User } = require("../models/userModel");
 const jwt = require("jsonwebtoken")
-const ApiError = require("../utils/ApiError")
+const ApiError = require("../Utils/ApiError")
 
 module.exports.verifyToken = async (req, res, next) => {
     try {

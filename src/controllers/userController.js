@@ -1,6 +1,6 @@
 const { User } = require("../models/userModel");
-const ApiError = require("../utils/ApiError");
-const ApiResponse = require("../utils/ApiResponse");
+const ApiError = require("../Utils/ApiError");
+const ApiResponse = require("../Utils/ApiResponse");
 const { sendVerificationCode } = require("../middlewares/email");
 const sendEmail = require("../middlewares/nodeMailer");
 const jwt = require("jsonwebtoken");
