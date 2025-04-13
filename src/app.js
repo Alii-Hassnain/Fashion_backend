@@ -23,7 +23,6 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   credentials: true, // Allow credentials like cookies
-  preflightContinue: true // Pass the OPTIONS request to the next middleware
 };
 
 app.use(cors(corsOptions));
