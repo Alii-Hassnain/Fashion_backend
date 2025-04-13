@@ -23,18 +23,16 @@ const corsOptions = {
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
   allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
   credentials: true, // Allow credentials like cookies
-  preflightContinue: true // Pass the OPTIONS request to the next middleware
+  preflightContinue: false // Pass the OPTIONS request to the next middleware
 };
 
 // Use CORS middleware with the configured options
 app.use(cors(corsOptions));
-
-// Handle preflight requests manually (if necessary)
+// Handle preflight (OPTIONS) requests
 app.options("*", (req, res) => {
-  // You can log or modify the response before sending it
   res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
   res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
-  res.sendStatus(200); // Respond with status 200
+  res.sendStatus(200); // Respond with 200 OK
 });
 
 
