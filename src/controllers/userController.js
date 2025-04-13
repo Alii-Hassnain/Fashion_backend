@@ -6,7 +6,7 @@ const sendEmail = require("../middlewares/nodeMailer");
 const jwt = require("jsonwebtoken");
 // module.exports.
 const registerUser = async (req, res) => {
-    const { username, email, password ,secret} = req.body;
+    const { username, email, password, secret } = req.body;
     if (!username || !email || !password) {
         return res.status(400).json({ message: "All fields are required", success: false });
     }
@@ -23,9 +23,9 @@ const registerUser = async (req, res) => {
                     }]
             })
 
-            if (existedUser && existedUser.isVerified===false) {
-               const deletedUser = await User.findByIdAndDelete(existedUser._id);
-            }
+        if (existedUser && existedUser.isVerified === false) {
+            const deletedUser = await User.findByIdAndDelete(existedUser._id);
+        }
         if (existedUser && existedUser.isVerified === true) {
 
             return res.status(409).json({ message: "User already exists", success: false });
@@ -34,14 +34,14 @@ const registerUser = async (req, res) => {
         let role = "user"
         const verificationCode = Math.floor(100000 + Math.random() * 900000).toString();
         console.log("verificatin code : ", verificationCode)
-        console.log("secret key from client : ",secret)
-        if(secret){
+        console.log("secret key from client : ", secret)
+        if (secret) {
             if (process.env.ADMIN_SECRET === secret) {
                 role = "admin";
-            }  
+            }
         }
-       
-         user = new User(
+
+        user = new User(
             {
                 username,
                 email,
@@ -110,7 +110,7 @@ const verifyUser = async (req, res) => {
         user.isVerified = true;
         user.verificationCode = undefined;
         const updatedUser = await user.save();
-        if(updatedUser.role==="admin"){
+        if (updatedUser.role === "admin") {
             return res
                 .status(200)
                 .json({ message: "Admin verified successfully", success: true, data: updatedUser });
@@ -284,37 +284,37 @@ const loginUser = async (req, res) => {
         const option = {
             httpOnly: true,
             // secure:true,
-            sameSite: "strict",
+            sameSite: false,
             maxAge: 24 * 60 * 60 * 1000
             // maxAge:60*2
         }
         // console.log("Tokens after generating ", accessToken, "\n ", refreshToken);
 
         const userWithoutPassword = await User.findById(user._id).select("-password")
-        const userName=userWithoutPassword.username
+        const userName = userWithoutPassword.username
         console.log("after login user : ", userWithoutPassword);
-        if(userWithoutPassword.role==="admin"){
+        if (userWithoutPassword.role === "admin") {
             return res
-            .status(200)
-            .cookie("refreshToken", refreshToken, option)
-            .cookie("accessToken", accessToken, option)
-            .cookie("username",userWithoutPassword.username,option)
-            .json(
-                {
-                    message: "Admin logged in successfully",
-                    data: userWithoutPassword,
-                    username: userWithoutPassword.username,
-                    token: accessToken,
-                    success: true,
-                }
-            )
+                .status(200)
+                .cookie("refreshToken", refreshToken, option)
+                .cookie("accessToken", accessToken, option)
+                .cookie("username", userWithoutPassword.username, option)
+                .json(
+                    {
+                        message: "Admin logged in successfully",
+                        data: userWithoutPassword,
+                        username: userWithoutPassword.username,
+                        token: accessToken,
+                        success: true,
+                    }
+                )
         }
 
         res
             .status(200)
             .cookie("refreshToken", refreshToken, option)
             .cookie("accessToken", accessToken, option)
-            .cookie("username",userWithoutPassword.username,option)
+            .cookie("username", userWithoutPassword.username, option)
             .json(
                 {
                     message: "User logged in successfully",
@@ -346,14 +346,14 @@ const logoutUser = async (req, res) => {
             { $set: { refreshToken: "" } },
             { new: true }
         )
-        if(user.role==="admin"){
+        if (user.role === "admin") {
             return res
-            .status(200)
-            .clearCookie("refreshToken", refreshToken, { maxAge: 0, httpOnly: true })
-            .clearCookie("accessToken", accessToken, { maxAge: 0, httpOnly: true })
-            .clearCookie("username", username, { maxAge: 0, httpOnly: true })
+                .status(200)
+                .clearCookie("refreshToken", refreshToken, { maxAge: 0, httpOnly: true })
+                .clearCookie("accessToken", accessToken, { maxAge: 0, httpOnly: true })
+                .clearCookie("username", username, { maxAge: 0, httpOnly: true })
 
-            .json({ message: "Admin logged out successfully", success: true })
+                .json({ message: "Admin logged out successfully", success: true })
         }
         return res
             .status(200)
@@ -364,7 +364,7 @@ const logoutUser = async (req, res) => {
             .json({ message: "User logged out successfully", success: true })
     } catch (error) {
         console.log("error in logout user", error)
-res.status(500).json({ message: error?.message || "Invalid access token ", success: false } )
+        res.status(500).json({ message: error?.message || "Invalid access token ", success: false })
         // throw new ApiError(401, error?.message || "Invalid access token ")
     }
 
@@ -372,31 +372,31 @@ res.status(500).json({ message: error?.message || "Invalid access token ", succe
 
 const verifySession = async (req, res) => {
     try {
-      const { refreshToken ,accessToken} = req.cookies ;
-      if (! accessToken) {
-        return res.status(401).json({ success: false, message: "No active session" });
-      }
-  
-      const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
-      console.log("DECODED : ",decoded)
-      if (!decoded) {
-        return res.status(401).json({ success: false, message: "Invalid session" });
-      }
-  
-      const user = await User.findById(decoded._id);
-      console.log("login in user : ",user)
-      if (!user) {
-        return res.status(404).json({ success: false, message: "User not found" });
-      }
-  
-      return res.status(200).json({ success: true, message: "User is logged in" ,user:user, username:user.username});
+        const { refreshToken, accessToken } = req.cookies;
+        if (!accessToken) {
+            return res.status(401).json({ success: false, message: "No active session" });
+        }
+
+        const decoded = jwt.verify(accessToken, process.env.ACCESS_TOKEN_SECRET);
+        console.log("DECODED : ", decoded)
+        if (!decoded) {
+            return res.status(401).json({ success: false, message: "Invalid session" });
+        }
+
+        const user = await User.findById(decoded._id);
+        console.log("login in user : ", user)
+        if (!user) {
+            return res.status(404).json({ success: false, message: "User not found" });
+        }
+
+        return res.status(200).json({ success: true, message: "User is logged in", user: user, username: user.username });
     } catch (error) {
-      console.error("Session verification error:", error);
-      return res.status(500).json({ success: false, message: "Internal server error" });
+        console.error("Session verification error:", error);
+        return res.status(500).json({ success: false, message: "Internal server error" });
     }
-  };
-  
-  
+};
+
+
 
 module.exports = {
     registerUser,
