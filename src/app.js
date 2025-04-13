@@ -18,11 +18,24 @@ const stripe = require("stripe")('sk_test_51Qt5f1IAryIsUHT2YN3ljJ4aLne5FHULLQQZx
 
 
 const app = express();
-app.use(cors({
-  origin: "*",             // Allow all origins
-  methods: ["GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"],  // Allow all methods
-  allowedHeaders: ["Content-Type", "Authorization"], // Allow all common headers
-}));
+const corsOptions = {
+  origin: "*", // Allow all origins (use more restrictive setting in production)
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"], // Allowed methods
+  allowedHeaders: ["Content-Type", "Authorization"], // Allowed headers
+  credentials: true, // Allow credentials like cookies
+  preflightContinue: true // Pass the OPTIONS request to the next middleware
+};
+
+// Use CORS middleware with the configured options
+app.use(cors(corsOptions));
+
+// Handle preflight requests manually (if necessary)
+app.options("*", (req, res) => {
+  // You can log or modify the response before sending it
+  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+  res.header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+  res.sendStatus(200); // Respond with status 200
+});
 
 
 
