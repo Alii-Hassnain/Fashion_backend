@@ -281,12 +281,21 @@ const loginUser = async (req, res) => {
         }
 
         const { refreshToken, accessToken } = await generateAccessAndRefreshToken(user._id)
-        const option = {
+// for production ----------------------->
+        // const option = {
+        //     httpOnly: true,
+        //     sameSite: "strict",
+        //     maxAge: 24 * 60 * 60 * 1000
+        //     // secure:true,
+        //     // maxAge:60*2
+        // }
+
+        // for development ------------------> 
+        const option={
             httpOnly: true,
-            // secure:true,
-            sameSite: "strict",
-            maxAge: 24 * 60 * 60 * 1000
-            // maxAge:60*2
+            secure: true, // 🔒 Required for SameSite=None
+            sameSite: "None", // ⛔ Required for cross-site cookies
+            maxAge: 24 * 60 * 60 * 1000,
         }
         // console.log("Tokens after generating ", accessToken, "\n ", refreshToken);
 
