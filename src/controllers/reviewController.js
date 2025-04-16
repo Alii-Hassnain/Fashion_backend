@@ -3,7 +3,7 @@ const { Review } = require("../models/reviewModel");
 const { Product } = require("../models/productModel");
 const { User } = require("../models/userModel");
 const express = require('express');
-const { Product } = require('../models/productModel');
+
 
 const updateAverageRating = async (productId) => {
     console.log("updateAverageRating is called");
