@@ -90,11 +90,13 @@ module.exports.getAllUsersOrderSummary = async (req, res) => {
             userId,
             totalOrders: 1,
             totalSpent: order.totalPrice,
+           
           };
         } else {
           orderSummary[userId].userId = userId;
           orderSummary[userId].totalOrders += 1;
           orderSummary[userId].totalSpent += order.totalPrice;
+           
         }
       }
   
@@ -117,6 +119,10 @@ module.exports.getAllUsersOrderSummary = async (req, res) => {
           totalSpent: summary.totalSpent,
         };
       });
+      result.sort((a, b) => b.totalSpent - a.totalSpent);
+  
+     
+
   
       res.json({data:result, message: "Users order summary fetched successfully", success: true});
     } catch (err) {

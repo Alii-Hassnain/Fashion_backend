@@ -19,7 +19,7 @@ const stripe = require("stripe")('sk_test_51Qt5f1IAryIsUHT2YN3ljJ4aLne5FHULLQQZx
 
 const app = express();
 const corsOptions = {
-  origin: "http://localhost:5173", // Frontend origin
+  origin: ["http://localhost:5173", "https://fashion-frontend-ecru.vercel.app", "https://fashion-frontend-git-main-aqeelarshad811-gmailcoms-projects.vercel.app","https://fashion-frontend-cbhjthqr0-aqeelarshad811-gmailcoms-projects.vercel.app/"], // Frontend origin
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
