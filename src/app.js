@@ -9,6 +9,7 @@ const cartRouter = require('./routers/cartRouter');
 const orderRouter = require("./routers/orderRouter");
 const reviewRouter = require('./routers/reviewRouter');
 const passport = require('passport');
+const multer = require('multer');
 require("./config/google_strategy");
 
 // const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -24,12 +25,19 @@ app.use(cors(
    } 
 ));
 
+
+
+
+
 //middlewares
 app.use(express.json());
 app.use(cookieParser())
 app.use(express.urlencoded({extended:true}));
 app.use(express.static('public'));
- app.use(passport.initialize());
+app.use(passport.initialize());
+
+
+
 
 
 //Route Definitions
@@ -94,10 +102,52 @@ app.get('/',(req,res)=>{
     res.json({mesg:"The name of the CEO is Ali Hassnain"})
 })
 
+
+
+
+
+
+
 app.post("/api/webhook", (req, res) => {
   console.log("Received  Data:", req.body);
   res.json({message:req.body})
 })
+
+
+// tryroom mobile image
+
+
+const uploads = {};
+const storage = multer.memoryStorage();
+const upload = multer({storage});
+
+// upload endpoint
+
+app.post('/api/upload/:sessionId',upload.single("image"),(req,res)=>{
+  const {sessionId}=req.params;
+  if(!req.file){
+    return res.status(400).json({error:"No file uploaded"});
+  }
+
+  uploads[sessionId] = req.file.buffer;
+  return res.json({
+    success:true
+  });
+});
+
+app.get("/api/image/:sessionId",(req,res)=>{
+  const {sessionId}=req.params;
+  const buffer = uploads[sessionId];
+  if(!buffer){
+    return res.status(404).json({error:"Image not found"});
+  }
+
+  const base64 = buffer.toString("base64");
+  const dataUrl = `data:${req.file?.mimetype || "image/png"};base64,${base64}`;
+  return res.json({imageDataUrl:dataUrl});
+}),
+
+
   // Response back to Botpress
 
 module.exports={app};

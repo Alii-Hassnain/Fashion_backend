@@ -14,17 +14,16 @@ const productsSchema = new Schema({
     rating: {
         type: Number,
         default: 0,
-        // min:0,
-        // max:5
     },
     product_image: {
-        type: String,
+        type:String,
         required: true,
+        minlength:1,
     },
-    // stock: {
-    //     type: Number,
-    //     default: 0
-    // },
+    stock: {
+        type: Number,
+        default: 0
+    },
     category: {
         type: String,
         required: true,
