@@ -10,6 +10,7 @@ const orderRouter = require("./routers/orderRouter");
 const reviewRouter = require('./routers/reviewRouter');
 const passport = require('passport');
 const multer = require('multer');
+const chatBot = require("./routers/botRouter")
 require("./config/google_strategy");
 
 // const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY);
@@ -46,7 +47,8 @@ app.use('/user',userRouter);
 app.use('/admin',adminRouter);
 app.use('/api',cartRouter);
 app.use("/api",orderRouter);
-app.use("/api",reviewRouter)
+app.use("/api",reviewRouter);
+app.use("/chat",chatBot);
 
 
 // app.post("/api/webhook", (req, res) => {
@@ -100,18 +102,16 @@ app.get('/auth/google',
 app.get('/',(req,res)=>{
     // res.send('Hello from server');
     res.json({mesg:"The name of the CEO is Ali Hassnain"})
+    console.log(req.user);
+    
 })
 
 
 
-
-
-
-
-app.post("/api/webhook", (req, res) => {
-  console.log("Received  Data:", req.body);
-  res.json({message:req.body})
-})
+// app.post("/api/webhook", (req, res) => {
+//   console.log("Received  Data:", req.body);
+//   res.json({message:req.body})
+// })
 
 
 // tryroom mobile image
@@ -146,6 +146,8 @@ app.get("/api/image/:sessionId",(req,res)=>{
   const dataUrl = `data:${req.file?.mimetype || "image/png"};base64,${base64}`;
   return res.json({imageDataUrl:dataUrl});
 }),
+
+
 
 
   // Response back to Botpress
