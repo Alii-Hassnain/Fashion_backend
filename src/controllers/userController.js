@@ -295,16 +295,11 @@ const loginUser = async (req, res) => {
         // console.log("Tokens after generating ", accessToken, "\n ", refreshToken);
 
         const userWithoutPassword = await User.findById(user._id).select("-password")
-<<<<<<< HEAD
-        const userName = userWithoutPassword.username
-=======
 
-        
-        
 
         if (userWithoutPassword.role !== "admin") {
             chatbotModel.id = user._id
-            chatbotModel.username = user.username
+            chatbotModel.username = user.userWithoutPassword.username
         }
 
 
@@ -313,7 +308,7 @@ const loginUser = async (req, res) => {
 
 
         const userName=userWithoutPassword.username
->>>>>>> endingg
+
         console.log("after login user : ", userWithoutPassword);
         if (userWithoutPassword.role === "admin") {
             return res
@@ -369,13 +364,12 @@ const logoutUser = async (req, res) => {
             { $set: { refreshToken: "" } },
             { new: true }
         )
-<<<<<<< HEAD
+
         if (user.role === "admin") {
-=======
         chatbotModel.id = null
-        chatbotModel.username = null // Remove the user data from req.oser
+        chatbotModel.username = null }// Remove the user data from req.oser
         if(user.role==="admin"){
->>>>>>> endingg
+
             return res
                 .status(200)
                 .clearCookie("refreshToken", refreshToken, { maxAge: 0, httpOnly: true })

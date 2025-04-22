@@ -4,10 +4,7 @@ const { Product } = require("../models/productModel");
 const { User } = require("../models/userModel");
 const express = require('express');
 
-<<<<<<< HEAD
-=======
 
->>>>>>> endingg
 const updateAverageRating = async (productId) => {
     console.log("updateAverageRating is called");
     try {
