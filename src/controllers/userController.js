@@ -4,6 +4,7 @@ const ApiResponse = require("../Utils/ApiResponse");
 const { sendVerificationCode } = require("../middlewares/email");
 const sendEmail = require("../middlewares/nodeMailer");
 const jwt = require("jsonwebtoken");
+const chatbotModel = require("../models/botModel")
 // module.exports.
 const registerUser = async (req, res) => {
     const { username, email, password, secret } = req.body;
@@ -294,7 +295,25 @@ const loginUser = async (req, res) => {
         // console.log("Tokens after generating ", accessToken, "\n ", refreshToken);
 
         const userWithoutPassword = await User.findById(user._id).select("-password")
+<<<<<<< HEAD
         const userName = userWithoutPassword.username
+=======
+
+        
+        
+
+        if (userWithoutPassword.role !== "admin") {
+            chatbotModel.id = user._id
+            chatbotModel.username = user.username
+        }
+
+
+        
+
+
+
+        const userName=userWithoutPassword.username
+>>>>>>> endingg
         console.log("after login user : ", userWithoutPassword);
         if (userWithoutPassword.role === "admin") {
             return res
@@ -312,6 +331,7 @@ const loginUser = async (req, res) => {
                     }
                 )
         }
+       
 
         res
             .status(200)
@@ -349,7 +369,13 @@ const logoutUser = async (req, res) => {
             { $set: { refreshToken: "" } },
             { new: true }
         )
+<<<<<<< HEAD
         if (user.role === "admin") {
+=======
+        chatbotModel.id = null
+        chatbotModel.username = null // Remove the user data from req.oser
+        if(user.role==="admin"){
+>>>>>>> endingg
             return res
                 .status(200)
                 .clearCookie("refreshToken", refreshToken, { maxAge: 0, httpOnly: true })
