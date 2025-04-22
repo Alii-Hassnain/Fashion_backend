@@ -295,7 +295,6 @@ module.exports.createProduct = async (req, res) => {
     const product = await Product.create({
       title,
       price,
-      rating,
       category,
       gender,
       description,

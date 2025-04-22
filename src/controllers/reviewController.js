@@ -27,12 +27,6 @@ const createReview= async (req, res) => {
         if (!productId || !rating || !comment) {
             return res.status(400).json({ message: "All fields are required", success: false });
         }
-        //   const review = await Review.create({
-        //     userId: req.user._id,
-        //     productId,
-        //     comment,
-        //     rating,
-        //   });
 
         const review = await Review.create({
             userId: req.user._id,
@@ -40,6 +34,8 @@ const createReview= async (req, res) => {
             comment,
             rating,
           });
+          const ratingInProduct = await Product.findByIdAndUpdate(productId, { rating: rating }, { new: true });
+          
           await updateAverageRating(productId);
             if (!review) {
                 return res.status(400).json({ message: "Unable to create review" , success : false});
