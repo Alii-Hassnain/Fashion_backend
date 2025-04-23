@@ -298,8 +298,8 @@ const loginUser = async (req, res) => {
 
 
         if (userWithoutPassword.role !== "admin") {
-            chatbotModel.id = user._id
-            chatbotModel.username = user.userWithoutPassword.username
+            chatbotModel.userId = user._id
+            chatbotModel.username = user.username
         }
 
 
@@ -307,9 +307,9 @@ const loginUser = async (req, res) => {
 
 
 
-        const userName=userWithoutPassword.username
+        // const userName=userWithoutPassword.username
 
-        console.log("after login user : ", userWithoutPassword);
+        // console.log("after login user : ", userWithoutPassword);
         if (userWithoutPassword.role === "admin") {
             return res
                 .status(200)
@@ -343,7 +343,7 @@ const loginUser = async (req, res) => {
                 }
             )
     } catch (error) {
-        console.log("error in login user", error.message)
+        console.log("error in login user", error)
         return res.status(500).json({ message: error?.message || "Invalid access token ", success: false })
     }
 }
