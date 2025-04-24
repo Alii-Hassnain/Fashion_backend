@@ -299,8 +299,11 @@ const loginUser = async (req, res) => {
 
         if (userWithoutPassword.role !== "admin") {
             chatbotModel.userId = user._id
-            chatbotModel.username = user.username
+            chatbotModel.userName = user.username
         }
+        console.log("This is the credentials")
+        console.log(chatbotModel.userId)
+        console.log(chatbotModel.userName)
 
 
         
@@ -366,8 +369,8 @@ const logoutUser = async (req, res) => {
         )
 
         if (user.role === "admin") {
-        chatbotModel.id = null
-        chatbotModel.username = null }// Remove the user data from req.oser
+        chatbotModel.userId = null
+        chatbotModel.userName = null }// Remove the user data from req.oser
         if(user.role==="admin"){
 
             return res

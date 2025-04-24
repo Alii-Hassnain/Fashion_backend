@@ -4,8 +4,9 @@ const { Order } = require("../models/orderModel");
 
 const greetUser = (req, res) => {
   // Check if user is logged in using req.oser
-  const id = chatbotModel.id;
-  const username = chatbotModel.username;
+  const id = chatbotModel.userId;
+  const username = chatbotModel.userName;
+  
   if (!id || !username) {
     return res.json({
       message: "Hello, guest 👋 Please login first.",
@@ -19,8 +20,8 @@ const greetUser = (req, res) => {
   });
 };
 const getOrderStatus = async (req, res) => {
-  const id = chatbotModel.id;
-  const username = chatbotModel.username;
+  const id = chatbotModel.userId;
+  const username = chatbotModel.userName;
   try {
     if (!id && !username) {
       return res.json({ message: "Please log in first.", success: false });

@@ -5,7 +5,7 @@ const chatbotSchema = new mongoose.Schema({
     type: String, // storing ID as plain string
     required: true
   },
-  username: {
+  userName: {
     type: String,
     required: true
   },
